@@ -1,0 +1,264 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn()
+        && request.auth.uid == 'wQgo9HTzP0NWC6JO2D1Di8iIPm62';
+    }
+
+    function userPath(uid) {
+      return /databases/$(database)/documents/users/$(uid);
+    }
+
+    function withdrawalPath(id) {
+      return /databases/$(database)/documents/withdrawals/$(id);
+    }
+
+    function transactionPath(id) {
+      return /databases/$(database)/documents/transactions/$(id);
+    }
+
+    function methodPath(id) {
+      return /databases/$(database)/documents/withdrawMethods/$(id);
+    }
+
+    function validWithdrawal(uid, id) {
+      let beforeUser = get(userPath(uid)).data;
+      let afterUser = getAfter(userPath(uid)).data;
+      let w = getAfter(withdrawalPath(id)).data;
+      let t = getAfter(transactionPath(id)).data;
+      let m = get(methodPath(w.methodId)).data;
+
+      return
+        beforeUser.balance is number
+        && afterUser.balance is number
+        && afterUser.balance >= 0
+        && afterUser.balance < beforeUser.balance
+        && afterUser.lastWithdrawalId == id
+
+        && w.uid == uid
+        && w.status == 'pending'
+        && w.methodId is string
+        && w.method == m.name
+        && m.enabled == true
+        && m.tiers is list
+        && m.tiers.hasAny([
+          {
+            'coins': w.coins,
+            'displayLabel': w.displayLabel
+          }
+        ])
+
+        && w.walletAddress is string
+        && w.walletAddress.size() >= 6
+        && w.walletAddress.size() <= 180
+        && w.coins is int
+        && w.coins > 0
+        && w.displayLabel is string
+        && afterUser.balance == beforeUser.balance - w.coins
+
+        && t.uid == uid
+        && t.type == 'withdrawal'
+        && t.coins == -w.coins
+        && t.withdrawalId == id;
+    }
+
+    match /admins/{uid} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    match /settings/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /socialLinks/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /offerWalls/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /withdrawMethods/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /withdrawalAmounts/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /users/{uid} {
+      allow read: if isAdmin()
+        || (signedIn() && request.auth.uid == uid);
+
+      allow create: if signedIn()
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.balance == 0
+        && request.resource.data.keys().hasOnly([
+          'uid',
+          'publicId',
+          'balance',
+          'createdAt',
+          'lastActiveAt'
+        ]);
+
+      allow update: if isAdmin()
+        || (
+          signedIn()
+          && request.auth.uid == uid
+          && request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly([
+              'lastActiveAt',
+              'publicId',
+              'wallEntries'
+            ])
+        )
+        || (
+          signedIn()
+          && request.auth.uid == uid
+          && request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly([
+              'ip',
+              'previousIp',
+              'ipAt',
+              'countryCode',
+              'country',
+              'countryAt',
+              'countrySrc',
+              'lastCountryCode',
+              'lastCountry',
+              'previousCountryCode',
+              'banned',
+              'banReason',
+              'bannedBy',
+              'bannedAt'
+            ])
+          && (
+            resource.data.get('banned', false) != true
+            || request.resource.data.banned == true
+          )
+          && (
+            resource.data.get('countryCode', '') == ''
+            || request.resource.data.countryCode == resource.data.countryCode
+          )
+        )
+        || (
+          signedIn()
+          && request.auth.uid == uid
+          && request.resource.data.diff(resource.data)
+            .affectedKeys().hasOnly([
+              'balance',
+              'lastWithdrawalId'
+            ])
+          && request.resource.data.balance is number
+          && request.resource.data.lastWithdrawalId is string
+          && validWithdrawal(
+            uid,
+            request.resource.data.lastWithdrawalId
+          )
+        );
+
+      allow delete: if isAdmin();
+    }
+
+    match /withdrawals/{id} {
+      allow read: if isAdmin()
+        || (
+          signedIn()
+          && resource.data.uid == request.auth.uid
+        );
+
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && validWithdrawal(request.auth.uid, id);
+
+      allow update, delete: if isAdmin();
+    }
+
+    match /transactions/{id} {
+      allow read: if isAdmin()
+        || (
+          signedIn()
+          && resource.data.uid == request.auth.uid
+        );
+
+      allow create: if signedIn()
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.type == 'withdrawal'
+        && request.resource.data.coins is int
+        && request.resource.data.coins < 0
+        && request.resource.data.withdrawalId == id
+        && validWithdrawal(request.auth.uid, id);
+
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+
+    match /offerWallSecrets/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /postbackLogs/{id} {
+      allow read: if isAdmin();
+      allow create, update: if false;
+      allow delete: if isAdmin();
+    }
+
+    match /offerEvents/{id} {
+      allow read: if isAdmin()
+        || (
+          signedIn()
+          && resource.data.uid == request.auth.uid
+        );
+
+      allow create, update: if false;
+      allow delete: if isAdmin();
+    }
+
+    // ---- VIP (third app): written only by the Cloudflare Functions (service account) and the admin ----
+    match /vipAccounts/{id} {
+      allow read, write: if isAdmin();
+      match /members/{m} {
+        allow read, write: if isAdmin();
+      }
+    }
+
+    match /vipWithdrawals/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /vipTransfers/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /vipMethods/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /adminSettings/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /vipInvoices/{id} {
+      allow read, write: if isAdmin();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

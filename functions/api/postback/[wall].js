@@ -8,10 +8,12 @@
 //   md5    : sig === md5(txid + '-' + secret)
 //   sha256 : sig === sha256(txid + '-' + secret)
 //   hmac   : sig === HMAC_SHA256(secret, uid + '|' + amount + '|' + txid)
+//   lootably: sig === sha256(userID + ip + revenue + currencyReward + secret)   (send &ip= &revenue= too)
+//   bitlabs : sig === HMAC_SHA1(secret, full URL without the trailing &hash=...)   (BitLabs appends &hash= itself)
 //   tapjoy : sig === md5(id:snuid:currency:secret)   (Tapjoy currency callback: appends snuid, currency, id, verifier itself)
 // Parameter names are flexible: uid|snuid|user_id..., amount|currency|reward|points..., txid|id|trans_id|transaction_id..., sig|verifier|hash|signature...
 import { handler, text, HttpError, getDoc, write, commit, isAlreadyExists, isMissing, mustCommit,
-  md5Hex, sha256Hex, hmacSha256Hex, timingSafeEqual, isUid } from '../../_lib/fb.js';
+  md5Hex, sha256Hex, hmacSha256Hex, hmacSha1Hex, timingSafeEqual, isUid } from '../../_lib/fb.js';
 
 const clean = (s) => String(s || '').trim();
 const MAX_POINTS = 5_000_000;
@@ -44,10 +46,11 @@ export const onRequest = handler(async ({ request, env, params: routeParams }) =
   if (!isUid(wallId)) return text('ERROR: bad wall', 400);
   const p = await params(request);
   const pick = (names) => { for (const n of names) if (p[n] !== undefined && clean(p[n]) !== '') return clean(p[n]); return ''; };
-  const uid = pick(['uid', 'snuid', 'user_id', 'userid', 'userId', 'sub_id', 'subid', 'player_id']),
-    txid = pick(['txid', 'id', 'trans_id', 'transaction_id', 'transactionId', 'txn_id', 'tid', 'oid', 'tx']),
+  const uid = pick(['uid', 'snuid', 'user_id', 'userid', 'userId', 'sub_id', 'subid', 'player_id', 'userID', 'external_identifier', 'externalIdentifier']),
+    txid = pick(['txid', 'id', 'trans_id', 'transaction_id', 'transactionId', 'txn_id', 'tid', 'oid', 'tx', 'transactionID']),
     sig = pick(['sig', 'verifier', 'hash', 'signature', 'secure_hash', 'mac']),
-    amountRaw = pick(['amount', 'currency', 'reward', 'points', 'virtual_currency', 'amount_local', 'value', 'val']);
+    amountRaw = pick(['amount', 'currency', 'reward', 'points', 'virtual_currency', 'amount_local', 'value', 'val', 'currencyReward', 'currency_amount']);
+  const ipP = pick(['ip', 'user_ip']), revenue = pick(['revenue', 'payout', 'payout_usd']), status = pick(['status']);
   const logP = { uid, txid, amount: amountRaw };
 
   const wall = await getDoc(env, `offerWalls/${wallId}`);
@@ -63,11 +66,18 @@ export const onRequest = handler(async ({ request, env, params: routeParams }) =
   else if (mode === 'md5') expected = md5Hex(txid + '-' + secret);
   else if (mode === 'sha256') expected = await sha256Hex(txid + '-' + secret);
   else if (mode === 'hmac') expected = await hmacSha256Hex(secret, uid + '|' + amountRaw + '|' + txid);
+  else if (mode === 'lootably') expected = await sha256Hex(uid + ipP + revenue + amountRaw + secret);
+  else if (mode === 'bitlabs') {
+    const u = request.url, i = u.lastIndexOf('&hash=');
+    expected = i < 0 ? '' : await hmacSha1Hex(secret, u.slice(0, i));
+  }
   else if (mode === 'tapjoy') expected = md5Hex(txid + ':' + uid + ':' + amountRaw + ':' + secret);
   else return text('ERROR: wall verify mode is invalid', 503);
-  const ok = sig && (mode === 'key' ? timingSafeEqual(sig, expected) : timingSafeEqual(sig.toLowerCase(), expected.toLowerCase()));
+  const ok = sig && expected && (mode === 'key' ? timingSafeEqual(sig, expected) : timingSafeEqual(sig.toLowerCase(), expected.toLowerCase()));
   if (!ok) { await log(env, wallId, 'bad_signature', logP, request); return text('ERROR: invalid signature', 403); }
 
+  // chargebacks / reversals (Lootably status=0, AyeT transaction ids prefixed r-) are never credited
+  if (status === '0' || /^r-/i.test(txid)) return text('OK ignored');
   // ---- validate ----
   if (!isUid(uid) || !txid || txid.length > 200) { await log(env, wallId, 'bad_request', logP, request); return text('ERROR: bad request', 400); }
   const amount = Number(amountRaw);
