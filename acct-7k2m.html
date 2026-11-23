@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101a45"><meta name="robots" content="noindex,nofollow,noarchive"><link rel="icon" href="data:,">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Account</title>
+<style>
+:root{--gold:#ffd24a;--gold2:#ff9f1a;--ink:#f4f6ff;--mut:#a9b4e6;--card:#1d2b66;--card2:#26377d;--line:#3a4b95;--ok:#37d67a;--bad:#ff6b88;--bg:#101a45;--field:#141f52}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{overscroll-behavior-y:none;scroll-behavior:smooth}
+body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);-webkit-user-select:none;user-select:none;
+ background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill-opacity='.2'%3E%3Ccircle cx='30' cy='30' r='14' fill='%23ffd24a'/%3E%3Ccircle cx='30' cy='30' r='9' fill='none' stroke='%23b8860b' stroke-width='2'/%3E%3Ctext x='30' y='35' font-size='13' font-weight='bold' text-anchor='middle' fill='%23b8860b' font-family='Arial'%3E$%3C/text%3E%3Crect x='70' y='72' width='34' height='18' rx='3' fill='%2337d67a'/%3E%3Ccircle cx='87' cy='81' r='5' fill='none' stroke='%23fff' stroke-width='1.5'/%3E%3Ccircle cx='92' cy='20' r='5' fill='%23ffd24a'/%3E%3Ccircle cx='20' cy='92' r='5' fill='%23ffd24a'/%3E%3C/g%3E%3C/svg%3E") 0 0/120px 120px,linear-gradient(165deg,#14204f,#1f2f72 55%,#2b2a73);background-attachment:fixed;padding-bottom:calc(92px + env(safe-area-inset-bottom))}
+ background-color:var(--bg);background-attachment:fixed}
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:radial-gradient(120% 60% at 50% -10%,#3b4fb866,transparent 60%),linear-gradient(180deg,#101a45cc,#0b1336f2)}
+input,button,select{font:inherit}input{-webkit-user-select:text;user-select:text}
+.wrap{max-width:560px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 16px 96px}
+.top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.avatar{width:46px;height:46px;border-radius:16px;background:linear-gradient(135deg,#ffd24a,#ff9f1a);color:#3a1d00;display:grid;place-items:center;font-weight:900;font-size:20px;box-shadow:0 6px 16px #ff9f1a55;flex:none}
+.who{flex:1;min-width:0}.who b{display:block;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.who span{font-size:12.5px;color:var(--mut)}
+.brand{font-size:22px;font-weight:900;color:var(--gold);letter-spacing:.5px;text-shadow:0 2px 10px #0006}
+.icon{border:0;background:#ffffff1f;color:#fff;border-radius:14px;width:42px;height:42px;font-size:20px;flex:none;cursor:pointer}
+.card{background:linear-gradient(180deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:24px;padding:18px;margin:14px 0;box-shadow:0 12px 28px #0005}
+.hero{background:linear-gradient(135deg,#ffcc33,#ff8a00 55%,#ff5d6c);color:#3a1d00;border:0;position:relative;overflow:hidden;padding:22px 20px}
+.hero::after{content:"💰";position:absolute;right:-8px;bottom:-18px;font-size:112px;opacity:.25}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 80% at 15% 0%,#fff6,transparent 60%)}
+.hero>*{position:relative}.hero small{font-weight:800;opacity:.75;letter-spacing:1.5px}.hero .pts{font-size:46px;font-weight:900;line-height:1.05;margin:6px 0 2px}.hero .usd{font-size:26px;font-weight:900}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.chip{background:#3a1d0022;border-radius:99px;padding:6px 12px;font-size:13px;font-weight:800}
+h3{margin:0 0 10px;font-size:18px;color:var(--gold)}
+h4{margin:18px 0 4px;font-size:15px;color:var(--ink)}
+label{display:block;font-size:13px;color:var(--mut);margin:14px 0 6px;font-weight:600}
+input,select{width:100%;padding:14px;border-radius:14px;border:1.5px solid var(--line);background:var(--field);color:var(--ink);font-size:16px;outline:none}
+input:focus,select:focus{border-color:var(--gold);box-shadow:0 0 0 3px #ffd24a33}
+select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);background-position:calc(100% - 22px) 52%,calc(100% - 16px) 52%;background-size:6px 6px;background-repeat:no-repeat;padding-right:38px}
+.btn{width:100%;margin-top:16px;padding:15px;border:0;border-radius:16px;font-weight:900;font-size:16px;color:#3a1d00;background:linear-gradient(110deg,#ffd24a,#ff9f1a);box-shadow:0 8px 18px #ff9f1a44;cursor:pointer}
+.btn:disabled{opacity:.55}.btn:active:not(:disabled){transform:scale(.98)}
+.btn.ghost{background:#ffffff1a;color:var(--ink);box-shadow:none}
+.btn.danger{background:#ff6b8833;color:#ffb3c2;box-shadow:none}
+.linkbtn{background:none;border:0;color:var(--gold);font-weight:800;padding:12px 4px;cursor:pointer;display:block;margin:6px auto 0}
+.msg{min-height:20px;margin:10px 0 0;font-size:14px;line-height:1.4}.msg.ok{color:var(--ok)}.msg.bad{color:var(--bad)}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.item{border:1px solid var(--line);background:#ffffff0d;border-radius:18px;padding:13px;margin:10px 0;display:grid;gap:6px}
+.item .big{font-weight:900;font-size:18px}.item small{color:var(--mut)}
+.pill{display:inline-block;width:max-content;padding:3px 11px;border-radius:99px;font-size:12px;font-weight:800}
+.pill.paid{background:#37d67a33;color:var(--ok)}.pill.gold{background:#ffd24a26;color:var(--gold)}
+.seal{width:62px;height:62px;flex:none}
+.empty{color:var(--mut);text-align:center;padding:18px 0}
+.tabbar{position:fixed;inset:auto 0 0 0;display:flex;background:#101a45ee;backdrop-filter:blur(10px);border-top:1px solid var(--line);padding:8px 10px calc(8px + env(safe-area-inset-bottom));z-index:5}
+.tabbar button{flex:1;border:0;background:none;color:var(--mut);font-weight:800;font-size:12.5px;padding:6px;display:grid;gap:3px;justify-items:center;cursor:pointer;border-radius:14px}
+.tabbar button span{font-size:23px}.tabbar button.on{color:var(--gold);background:#ffd24a14}
+.hidden{display:none!important}
+.center{min-height:100vh;display:grid;align-content:center;padding:24px 18px;max-width:520px;margin:0 auto}
+.center .logo{text-align:center;font-size:70px;filter:drop-shadow(0 8px 18px #ffb30066)}.center h1{margin:4px 0 2px;text-align:center;color:var(--gold);font-size:32px;letter-spacing:.5px}.center>p{text-align:center;color:var(--mut);margin:0 0 8px}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:15px;border:0;border-radius:16px;background:#fff;color:#1f1f1f;font-weight:800;font-size:16px;box-shadow:0 8px 18px #0004;cursor:pointer}
+.gbtn svg{width:22px;height:22px}.gbtn:disabled{opacity:.6}
+.numbox{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--field);border:1.5px dashed var(--gold);border-radius:18px;padding:12px 14px}.numbox b{font-size:26px;letter-spacing:3px;color:var(--gold);direction:ltr}
+.numbox button{border:0;background:var(--gold);color:#3a1d00;font-weight:900;border-radius:12px;padding:10px 15px;cursor:pointer}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #ffffff14}.kv:last-child{border:0}.kv span{color:var(--mut)}.kv b{text-align:right;word-break:break-word}
+.note{color:var(--mut);font-size:13px;line-height:1.55}
+.steps{display:grid;gap:8px;margin:6px 0 0;padding:0;list-style:none;counter-reset:s}.steps li{counter-increment:s;position:relative;padding-left:34px;min-height:24px;font-size:14px;line-height:1.5;color:var(--ink)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#3a1d00;font-weight:900;display:grid;place-items:center;font-size:13px}
+.sus{min-height:100vh;display:grid;place-content:center;text-align:center;padding:30px}.sus .em{font-size:72px}.sus h2{color:var(--bad);margin:8px 0}
+.spin{min-height:100vh;display:grid;place-items:center;font-size:60px;animation:pulse 1.2s infinite}@keyframes pulse{50%{opacity:.4;transform:scale(.92)}}
+#paid{position:fixed;inset:0;z-index:30;background:#0b1236e6;backdrop-filter:blur(6px);display:grid;place-items:center;text-align:center;padding:24px}
+#paid .box{max-width:360px;animation:pop .5s cubic-bezier(.2,1.4,.4,1) both}
+#paid .seal{width:150px;height:150px;filter:drop-shadow(0 10px 24px #ffb30088)}
+#paid h2{margin:14px 0 4px;font-size:30px;color:var(--gold)}#paid p{margin:4px 0;color:var(--ink)}
+.coin{position:absolute;top:-40px;font-size:28px;animation:fall linear forwards}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+section.fade{animation:fadein .25s ease both}@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+.hero{box-shadow:0 18px 40px #ff8a0044,inset 0 1px 0 #fff8}
+.hero .pts{letter-spacing:.5px;text-shadow:0 2px 0 #fff5}
+.card{backdrop-filter:blur(6px)}
+.card h3{display:flex;align-items:center;gap:8px}
+.numbox{background:linear-gradient(135deg,#141f52,#1a2766);box-shadow:inset 0 0 0 1px #ffd24a22}
+.item{transition:transform .15s}.item:active{transform:scale(.99)}
+.tabbar{border-radius:22px 22px 0 0;box-shadow:0 -10px 30px #0006}
+.tabbar button.on{background:linear-gradient(180deg,#ffd24a22,#ffd24a0a)}
+.gbtn{transition:transform .15s}.gbtn:active{transform:scale(.98)}
+.center .logo{animation:float 3s ease-in-out infinite}@keyframes float{50%{transform:translateY(-6px)}}
+input::placeholder{color:#7f8ccc}
+@media(prefers-reduced-motion:reduce){.center .logo,.spin{animation:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="sealSvg" viewBox="0 0 120 120"><circle cx="60" cy="60" r="56" fill="#ffd24a" stroke="#b8860b" stroke-width="4"/><circle cx="60" cy="60" r="46" fill="none" stroke="#b8860b" stroke-width="2" stroke-dasharray="3 4"/><circle cx="60" cy="60" r="38" fill="#2fbf6b"/><path d="M42 61l13 13 24-28" fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+
+<section id="splash" class="spin">👑</section>
+
+<!-- 1) Google sign-in only -->
+<section id="login" class="hidden center">
+ <div class="logo">👑</div><h1>YASJOY Account</h1><p>Create your account or sign in</p>
+ <div class="card">
+  <button class="gbtn" id="gBtn"><svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg><span>Continue with Google</span></button>
+  <p class="msg" id="loginMsg"></p><p class="note" id="wvNote" hidden style="color:var(--gold)">If Google does not open here, open this page in Chrome.</p>
+  <p class="note">Each account is linked to one Google account. If you delete the app, sign in again with the same Google account, your Account ID and your password — nothing is lost.</p>
+ </div>
+</section>
+
+<!-- 2) create account -->
+<section id="setup" class="hidden"><div class="wrap">
+ <div class="top"><div class="brand">👑 Account</div><div class="who" style="text-align:right"><span id="setupMail"></span></div><button class="icon" id="setupOut" aria-label="Sign out">⎋</button></div>
+ <div class="card" id="newBox">
+  <h3>Create your account</h3>
+  <label for="fNum">Account ID (from the admin)</label><input id="fNum" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="9-digit Account ID">
+  <label for="fName">Name</label><input id="fName" maxlength="40" autocomplete="off" placeholder="Your name">
+  <label for="fMethod">Category</label><select id="fMethod"></select>
+  <div id="fIdBox"><label for="fWallet" id="fWalletLbl">ID number</label><input id="fWallet" maxlength="80" autocomplete="off" placeholder="ID number"></div>
+  <label for="fPass">Password</label><input id="fPass" type="password" maxlength="32" autocomplete="new-password" placeholder="At least 6 characters">
+  <label for="fPass2">Confirm password</label><input id="fPass2" type="password" maxlength="32" autocomplete="new-password" placeholder="Repeat the password">
+  <p class="note">You need an Account ID from the admin. Without it an account cannot be created. Keep your password safe.</p>
+  <button class="btn" id="regBtn">Create account</button><p class="msg" id="regMsg"></p>
+ </div>
+ <div class="card hidden" id="recBox">
+  <h3>Account reset by the admin</h3>
+  <p class="note">The admin reset your account. Enter your Account ID, the recovery code the admin gave you and a new password.</p>
+  <label for="rNum">Account ID</label><input id="rNum" inputmode="numeric" maxlength="12" autocomplete="off">
+  <label for="rCode">Recovery code</label><input id="rCode" inputmode="numeric" maxlength="12" autocomplete="off">
+  <label for="rPass">New password</label><input id="rPass" type="password" maxlength="32" autocomplete="new-password">
+  <button class="btn" id="recBtn">Continue</button><p class="msg" id="recMsg"></p>
+ </div>
+</div></section>
+
+<!-- 3) Registered account: number + password -->
+<section id="pinScr" class="hidden center">
+ <div class="logo">🔐</div><h1 id="pinHello">Welcome back</h1><p id="pinMail"></p>
+ <div class="card">
+  <label for="lNum">Account ID</label><input id="lNum" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="9-digit number from your account">
+  <label for="lPass">Password</label><input id="lPass" type="password" maxlength="64" autocomplete="current-password" placeholder="Password">
+  <button class="btn" id="pinBtn">Sign in</button><p class="msg" id="pinMsg"></p>
+  <button class="linkbtn" id="forgotBtn">Forgot password?</button>
+  <button class="linkbtn" id="pinOut" style="color:var(--mut)">Use another Google account</button>
+ </div>
+</section>
+
+<!-- 4) Forgot password -->
+<section id="forgot" class="hidden"><div class="wrap">
+ <div class="top"><button class="icon" id="fgBack" aria-label="Back">←</button><div class="brand">Forgot password</div></div>
+ <div class="card">
+  <p class="note" style="margin-top:0">Choose the category you registered with and enter the ID number exactly as registered. The ID cannot be changed here — to change it, contact the admin.</p>
+  <label for="gMethod">Category</label><select id="gMethod"></select>
+  <div id="gIdBox"><label for="gWallet" id="gWalletLbl">ID number</label><input id="gWallet" maxlength="80" autocomplete="off"></div>
+  <label for="gPass">New password</label><input id="gPass" type="password" maxlength="32" autocomplete="new-password" placeholder="At least 6 characters">
+  <label for="gPass2">Confirm new password</label><input id="gPass2" type="password" maxlength="32" autocomplete="new-password">
+  <button class="btn" id="fgBtn">Set new password</button><p class="msg" id="fgMsg"></p>
+ </div>
+</div></section>
+
+<section id="susp" class="hidden sus"><div class="em">⛔</div><h2>Account suspended</h2><p id="suspTxt" style="max-width:320px">This account is suspended by the admin.</p><button class="btn ghost" id="suspOut" style="max-width:260px;margin:18px auto 0">Sign out</button></section>
+
+<!-- 5) The app -->
+<div id="app" class="hidden">
+ <div class="wrap">
+  <div class="top"><div class="avatar" id="avatar">V</div><div class="who"><b id="who">—</b><span id="whoSub"></span></div><button class="icon" id="refresh" aria-label="Refresh">⟳</button></div>
+
+  <section id="tabPoints" class="fade">
+   <div class="card hero"><small>YOUR POINTS</small><div class="pts" id="pts">0</div><div class="usd" id="usd">$0.00</div>
+    <div class="chips"><span class="chip">👥 <span id="accs">0</span> accounts used</span><span class="chip">1 USD = 1,000 pts</span></div></div>
+   <div class="card"><h3>Your Account ID</h3><div class="numbox"><b id="myNum">—</b><button id="copyNum">Copy</button></div></div>
+   <div class="card"><h3>Points received</h3><div id="transfers"></div></div>
+  </section>
+
+  <section id="tabPay" class="hidden">
+   <div class="card"><h3>🧾 Payments</h3><p class="note" style="margin-top:0">Every payment from the admin appears here as a paid invoice.</p><div id="invList"></div></div>
+  </section>
+
+  <section id="tabProfile" class="hidden">
+   <div class="card"><h3>Your account</h3>
+    <div class="kv"><span>Name</span><b id="pName"></b></div><div class="kv"><span>Category</span><b id="pMethod"></b></div><div class="kv"><span>ID number</span><b id="pWallet"></b></div><div class="kv"><span>Google</span><b id="pMail"></b></div><div class="kv"><span>Account ID</span><b id="pNum"></b></div>
+    <p class="note" style="margin-bottom:0">Your Account ID can only be changed by the admin.</p></div>
+   <div class="card"><h3>Edit my details</h3>
+    <label for="sName">Name</label><input id="sName" maxlength="40" autocomplete="off">
+    <label for="sMethod">Category</label><select id="sMethod"></select>
+    <div id="sIdBox"><label for="sWallet" id="sWalletLbl">ID number</label><input id="sWallet" maxlength="80" autocomplete="off"></div>
+    <label for="sPassA">Your password</label><input id="sPassA" type="password" maxlength="64" autocomplete="current-password" placeholder="Required to save">
+    <button class="btn" id="sSave">Save</button><p class="msg" id="sMsg"></p></div>
+   <div class="card"><h3>Change password</h3>
+    <label for="cOld">Current password</label><input id="cOld" type="password" maxlength="64" autocomplete="current-password">
+    <label for="cNew">New password</label><input id="cNew" type="password" maxlength="32" autocomplete="new-password" placeholder="At least 6 characters">
+    <label for="cNew2">Confirm new password</label><input id="cNew2" type="password" maxlength="32" autocomplete="new-password">
+    <button class="btn" id="cSave">Change password</button><p class="msg" id="cMsg"></p></div>
+   <button class="btn danger" id="bOut2">Sign out</button>
+  </section>
+ </div>
+ <nav class="tabbar"><button id="bPoints" class="on"><span>🪙</span>Points</button><button id="bPay"><span>🧾</span>Payments</button><button id="bProf"><span>⚙️</span>Settings</button></nav>
+</div>
+
+<div id="paid" class="hidden" role="dialog" aria-live="polite"><div class="box"><svg class="seal"><use href="#sealSvg"/></svg><h2>You have been paid!</h2><p id="paidAmt" style="font-size:26px;font-weight:900"></p><p id="paidInv" style="color:var(--mut)"></p><button class="btn" id="paidOk">Great!</button></div></div>
+
+<script type="module">
+import {initializeApp,getApps,getApp} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+const firebaseConfig={apiKey:"AIzaSyB45rvl6iTjsdiW3-Ka6jyqiFaJmrsUUwI",authDomain:"yasjoy.firebaseapp.com",projectId:"yasjoy",storageBucket:"yasjoy.firebasestorage.app",messagingSenderId:"967065409063",appId:"1:967065409063:web:4f7b882cc38f17ec8a2002"};
+const app=getApps().length?getApp():initializeApp(firebaseConfig),auth=getAuth(app);
+const $=id=>document.getElementById(id),SS={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}},del(k){try{sessionStorage.removeItem(k)}catch(e){}}};
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+let user=null,num=SS.get('acct_num')||'',pw=SS.get('acct_pw')||'',data=null,timer=null,busy=false,methods=[];
+const fmt=n=>(Math.floor(Number(n)||0)).toLocaleString('en-US');
+const usd=p=>'$'+(Math.floor(Math.max(0,Math.floor(Number(p)||0))/10)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const when=v=>{if(!v)return '';const d=new Date(v);return isNaN(d)?'':d.toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'})};
+function el(t,txt,c){const n=document.createElement(t);if(txt!==undefined)n.textContent=txt;if(c)n.className=c;return n}
+const SCREENS=['splash','login','setup','pinScr','forgot','susp','app'];
+function screen(id){SCREENS.forEach(s=>$(s).classList.toggle('hidden',s!==id));window.scrollTo(0,0)}
+const say=(id,t,cls)=>{const m=$(id);m.textContent=t||'';m.className='msg'+(cls?' '+cls:'')};
+async function api(path,body){
+ const token=await user.getIdToken();
+ const r=await fetch('/api/acct/'+path,{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+token},body:JSON.stringify(body||{})});
+ const j=await r.json().catch(()=>({}));
+ if(!r.ok||j.ok===false){const e=new Error(j.error||('Error '+r.status));e.status=r.status;e.data=j;throw e}
+ return j;
+}
+async function loadMethods(){try{const r=await fetch('/api/acct/methods');const j=await r.json();if(j&&j.ok&&Array.isArray(j.methods))methods=j.methods}catch(e){}if(!methods.length)methods=[{id:'personal',name:'Personal',requiresId:false,idLabel:''}]}
+function fillSelect(sel,selected){sel.replaceChildren();methods.forEach(m=>{const o=el('option',m.name);o.value=m.id;sel.append(o)});if(selected&&methods.some(m=>m.id===selected))sel.value=selected}
+function bindIdField(sel,box,lbl,input){const f=()=>{const m=methods.find(x=>x.id===sel.value)||{};box.classList.toggle('hidden',!m.requiresId);lbl.textContent=(m.idLabel||'ID number')+' (required)';input.placeholder=m.idLabel||'ID number'};sel.addEventListener('change',f);f();return f}
+let fReg,fForgot,fSet;
+function seal(){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('class','seal');const u=document.createElementNS('http://www.w3.org/2000/svg','use');u.setAttribute('href','#sealSvg');s.append(u);return s}
+function rain(){const box=$('paid');for(let i=0;i<22;i++){const c=el('span',['🪙','💰','💵','✨'][i%4],'coin');c.style.left=(Math.random()*100)+'%';c.style.animationDuration=(2.4+Math.random()*2.6)+'s';c.style.animationDelay=(Math.random()*1.2)+'s';box.append(c);setTimeout(()=>c.remove(),7000)}}
+function showPaid(v){$('paidAmt').textContent=fmt(v.points)+' pts = '+usd(v.points);$('paidInv').textContent=v.invoiceNo?'Invoice '+v.invoiceNo:'';$('paid').classList.remove('hidden');rain()}
+function checkPaid(){
+ const key='acct_seen_'+data.account.number,raw=LS.get(key),ids=data.invoices.map(v=>v.invoiceNo);
+ if(raw===null){LS.set(key,JSON.stringify(ids));return}
+ let seen=[];try{seen=JSON.parse(raw)||[]}catch(e){}
+ const fresh=data.invoices.filter(v=>!seen.includes(v.invoiceNo));
+ if(fresh.length){LS.set(key,JSON.stringify(ids));showPaid(fresh[0])}
+}
+function render(){
+ const a=data.account;
+ $('who').textContent=a.name||'Account';$('avatar').textContent=(a.name||'V').trim().charAt(0).toUpperCase();$('whoSub').textContent=(a.method||'')+(a.walletNumber?' · '+a.walletNumber:'');
+ $('pts').textContent=fmt(a.points);$('usd').textContent=usd(a.points);$('accs').textContent=fmt(a.accounts);$('myNum').textContent=a.number;
+ $('pName').textContent=a.name;$('pMethod').textContent=a.method||'—';$('pWallet').textContent=a.walletNumber||'—';$('pMail').textContent=a.email||'—';$('pNum').textContent=a.number;
+ const tr=$('transfers');tr.replaceChildren();
+ if(!data.transfers.length)tr.append(el('div','No points received yet.','empty'));
+ data.transfers.forEach(t=>{const i=el('div','','item'),r=el('div','','row');r.append(el('span','+'+fmt(t.points)+' pts','big'),el('b',t.usd));i.append(r,el('small',(t.from?'From '+t.from+' · ':'')+when(t.createdAt)));tr.append(i)});
+ const il=$('invList');il.replaceChildren();
+ if(!data.invoices.length)il.append(el('div','No payments yet.','empty'));
+ data.invoices.forEach(v=>{const i=el('div','','item'),r=el('div','','row'),left=el('div');left.append(el('div',fmt(v.points)+' pts','big'),el('b',v.usd));r.append(left,seal());i.append(r,el('span','✓ PAID · '+(v.invoiceNo||''),'pill paid'),el('small',when(v.createdAt)+(v.reference?' · Ref '+v.reference:'')));il.append(i)});
+ if(data.methods&&data.methods.length)methods=data.methods;
+ const keep=$('sMethod').value;fillSelect($('sMethod'),keep&&document.activeElement&&$('tabProfile').contains(document.activeElement)?keep:a.methodId);
+ if(!fSet)fSet=bindIdField($('sMethod'),$('sIdBox'),$('sWalletLbl'),$('sWallet'));
+ if(!$('tabProfile').contains(document.activeElement)){$('sWallet').value=a.walletNumber||'';$('sName').value=a.name||''}
+ fSet();
+}
+function suspended(j){
+ const until=j&&j.until?new Date(j.until).toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'}):'';
+ $('suspTxt').textContent='This account is suspended by the admin.'+(j&&j.reason?' Reason: '+j.reason+'.':'')+(until?' Until: '+until+'.':'');
+ clearInterval(timer);screen('susp');
+}
+async function load(silent){
+ if(busy||!user)return;busy=true;
+ try{
+  const j=await api('me',pw?{number:num,password:pw}:{});
+  if(j.state==='register'){$('setupMail').textContent=j.email||'';if(j.methods&&j.methods.length)methods=j.methods;fillSelect($('fMethod'));if(!fReg)fReg=bindIdField($('fMethod'),$('fIdBox'),$('fWalletLbl'),$('fWallet'));fReg();$('newBox').classList.remove('hidden');$('recBox').classList.add('hidden');screen('setup')}
+  else if(j.state==='recover'){$('setupMail').textContent=j.email||'';$('newBox').classList.add('hidden');$('recBox').classList.remove('hidden');screen('setup')}
+  else if(j.state==='login'){$('pinHello').textContent='Welcome back'+(j.name?', '+j.name:'');$('pinMail').textContent=j.email||'';screen('pinScr');setTimeout(()=>$('lNum').focus(),50)}
+  else if(j.state==='ready'){SS.set('acct_num',num);SS.set('acct_pw',pw);data=j;render();checkPaid();screen('app');startPoll()}
+ }catch(e){
+  if(e.data&&e.data.suspended)suspended(e.data);
+  else if((e.status===401||e.status===429)&&pw){pw='';SS.del('acct_pw');screen('pinScr');say('pinMsg',e.message,'bad')}
+  else if(!silent){screen('login');say('loginMsg',e.message,'bad')}
+ }finally{busy=false}
+}
+function startPoll(){clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)load(true)},15000)}
+
+try{if(/FBAN|FBAV|Instagram|WhatsApp|Line\/|; wv\)/i.test(navigator.userAgent))$('wvNote').hidden=false}catch(e){}
+$('gBtn').onclick=async()=>{
+ const b=$('gBtn');b.disabled=true;say('loginMsg','Opening Google…');
+ const p=new GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
+ try{await signInWithPopup(auth,p);say('loginMsg','')}
+ catch(e){
+  if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){try{await signInWithRedirect(auth,p);return}catch(e2){e=e2}}
+  if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request')say('loginMsg','');
+  else if(e.code==='auth/operation-not-allowed')say('loginMsg','Google sign-in is not enabled yet (Firebase → Authentication → Sign-in method → Google).','bad');
+  else if(e.code==='auth/unauthorized-domain')say('loginMsg','This domain is not authorized in Firebase (Authentication → Settings → Authorized domains).','bad');
+  else say('loginMsg','Sign-in failed ('+(e.code||'error')+'). '+(e.code==='auth/network-request-failed'?'Check your internet connection.':'Try again, or open this page in Chrome.'),'bad');
+ }finally{b.disabled=false}
+};
+$('regBtn').onclick=async()=>{
+ const name=$('fName').value.trim(),m=methods.find(x=>x.id===$('fMethod').value)||{},wallet=$('fWallet').value.trim(),p1=$('fPass').value,p2=$('fPass2').value;
+ const rnum=$('fNum').value.trim();if(!/^\d{6,12}$/.test(rnum))return say('regMsg','Enter the Account ID you received from the admin','bad');
+ if(name.length<2)return say('regMsg','Enter your name','bad');
+ if(!m.id)return say('regMsg','Choose a category','bad');
+ if(m.requiresId&&!wallet)return say('regMsg','Enter your '+(m.idLabel||'ID number'),'bad');
+ if(p1.length<6)return say('regMsg','Password must be at least 6 characters','bad');
+ if(p1!==p2)return say('regMsg','The two passwords do not match','bad');
+ $('regBtn').disabled=true;say('regMsg','Creating…');
+ try{const j=await api('register',{number:rnum,name,methodId:m.id,walletNumber:m.requiresId?wallet:'',password:p1});num=j.number;pw=p1;say('regMsg','');await load(false)}
+ catch(e){say('regMsg',e.message,'bad')}finally{$('regBtn').disabled=false}
+};
+$('recBtn').onclick=async()=>{
+ const number=$('rNum').value.trim(),code=$('rCode').value.trim(),p=$('rPass').value;
+ if(!/^\d{6,12}$/.test(number)||!code)return say('recMsg','Enter your number and the recovery code','bad');
+ if(p.length<6)return say('recMsg','Password must be at least 6 characters','bad');
+ $('recBtn').disabled=true;say('recMsg','Checking…');
+ try{await api('recover',{number,code,pin:p});num=number;pw=p;say('recMsg','');await load(false)}
+ catch(e){say('recMsg',e.message,'bad')}finally{$('recBtn').disabled=false}
+};
+$('pinBtn').onclick=async()=>{const n=$('lNum').value.trim(),p=$('lPass').value;if(!/^\d{6,12}$/.test(n))return say('pinMsg','Enter your Account ID','bad');if(p.length<4)return say('pinMsg','Enter your password','bad');num=n;pw=p;say('pinMsg','Checking…');busy=false;await load(false);$('lPass').value=''};
+$('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')$('pinBtn').click()});
+$('forgotBtn').onclick=async()=>{await loadMethods();fillSelect($('gMethod'));if(!fForgot)fForgot=bindIdField($('gMethod'),$('gIdBox'),$('gWalletLbl'),$('gWallet'));fForgot();say('fgMsg','');screen('forgot')};
+$('fgBack').onclick=()=>screen('pinScr');
+$('fgBtn').onclick=async()=>{
+ const m=methods.find(x=>x.id===$('gMethod').value)||{},wallet=$('gWallet').value.trim(),p1=$('gPass').value,p2=$('gPass2').value;
+ if(!m.id)return say('fgMsg','Choose your category','bad');
+ if(m.requiresId&&!wallet)return say('fgMsg','Enter the ID number you registered','bad');
+ if(p1.length<6)return say('fgMsg','Password must be at least 6 characters','bad');
+ if(p1!==p2)return say('fgMsg','The two passwords do not match','bad');
+ $('fgBtn').disabled=true;say('fgMsg','Checking…');
+ try{await api('forgot',{methodId:m.id,walletNumber:m.requiresId?wallet:'',password:p1});say('fgMsg','✓ Password changed. Now sign in with your Account ID and the new password.','ok');setTimeout(()=>{say('pinMsg','Password changed. Sign in with the new password.','ok');screen('pinScr')},1600)}
+ catch(e){say('fgMsg',e.data&&e.data.contactAdmin?e.message:e.message,'bad')}finally{$('fgBtn').disabled=false}
+};
+$('sSave').onclick=async()=>{
+ const m=methods.find(x=>x.id===$('sMethod').value)||{},wallet=$('sWallet').value.trim(),cur=$('sPassA').value;
+ const sname=$('sName').value.trim();if(sname.length<2)return say('sMsg','Enter your name','bad');if(m.requiresId&&!wallet)return say('sMsg','Enter your '+(m.idLabel||'ID number'),'bad');
+ if(!cur)return say('sMsg','Enter your password to save','bad');
+ $('sSave').disabled=true;say('sMsg','Saving…');
+ try{await api('update',{number:data.account.number,password:cur,name:sname,methodId:m.id,walletNumber:m.requiresId?wallet:''});pw=cur;say('sMsg','✓ Saved','ok');$('sPassA').value='';busy=false;await load(true)}
+ catch(e){say('sMsg',e.message,'bad')}finally{$('sSave').disabled=false}
+};
+$('cSave').onclick=async()=>{
+ const o=$('cOld').value,n=$('cNew').value,n2=$('cNew2').value;
+ if(!o)return say('cMsg','Enter your current password','bad');
+ if(n.length<6)return say('cMsg','New password must be at least 6 characters','bad');
+ if(n!==n2)return say('cMsg','The two passwords do not match','bad');
+ $('cSave').disabled=true;say('cMsg','Saving…');
+ try{await api('update',{number:data.account.number,password:o,newPassword:n});pw=n;SS.set('acct_pw',pw);say('cMsg','✓ Password changed','ok');$('cOld').value=$('cNew').value=$('cNew2').value=''}
+ catch(e){say('cMsg',e.message,'bad')}finally{$('cSave').disabled=false}
+};
+const out=async()=>{num='';pw='';SS.del('acct_num');SS.del('acct_pw');data=null;clearInterval(timer);try{await signOut(auth)}catch(e){}};
+$('pinOut').onclick=out;$('setupOut').onclick=out;$('suspOut').onclick=out;$('bOut2').onclick=out;
+$('refresh').onclick=()=>{busy=false;load(false)};
+$('copyNum').onclick=async()=>{try{await navigator.clipboard.writeText($('myNum').textContent);$('copyNum').textContent='Copied ✓'}catch(e){$('copyNum').textContent='Select & copy'}setTimeout(()=>$('copyNum').textContent='Copy',1600)};
+function tab(w){[['p','tabPoints','bPoints'],['y','tabPay','bPay'],['a','tabProfile','bProf']].forEach(([k,s,b])=>{$(s).classList.toggle('hidden',k!==w);$(s).classList.toggle('fade',k===w);$(b).classList.toggle('on',k===w)});window.scrollTo(0,0)}
+$('bPoints').onclick=()=>tab('p');$('bPay').onclick=()=>tab('y');$('bProf').onclick=()=>tab('a');
+$('paidOk').onclick=()=>{$('paid').classList.add('hidden');tab('y')};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)load(true)});
+onAuthStateChanged(auth,u=>{user=u;if(!u){clearInterval(timer);screen('login');return}load(false)});
+</script>
+</body>
+</html>

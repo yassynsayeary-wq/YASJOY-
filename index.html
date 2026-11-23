@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#dff4ff"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icons/icon-192.png"><link rel="apple-touch-icon" href="/icons/icon-192.png">
+<title>YASJOY - Earn Rewards</title>
+<style>
+*{box-sizing:border-box}
+:root{--blue:#16bdf2;--dark:#17365f;--muted:#7892aa;--crimson:#dc143c;--sky:#16bdf2}
+body{margin:0;background:linear-gradient(145deg,#dff8ff,#fff5f7,#e6f7ff);font-family:Arial,sans-serif;color:var(--dark);padding-bottom:100px}
+header{max-width:720px;margin:auto;padding:22px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand{display:flex;align-items:center;gap:8px;font-size:30px;font-weight:900;color:#0878d7}
+.star{font-size:39px;filter:drop-shadow(1px 3px 2px #e9b900)}
+.balance{background:white;border-radius:35px;padding:12px 15px;display:flex;align-items:center;gap:10px;box-shadow:0 5px 18px #74bce833;font-size:20px;font-weight:bold}
+.coin{font-size:25px}button{cursor:pointer;font:inherit}
+main{max-width:720px;margin:auto;padding:0 18px}.page{display:none}.page.active{display:block}
+.banner{min-height:205px;border-radius:28px;padding:25px;background:linear-gradient(130deg,#16bdf2,#078fce 58%,#dc143c);color:white;display:flex;align-items:center;gap:16px;box-shadow:0 12px 25px #078af526}
+.wallet{font-size:90px}.banner-text{font-size:clamp(23px,5vw,34px);font-weight:800;line-height:1.25}
+.go{border:0;background:#ffffff38;color:white;border-radius:50%;width:55px;height:55px;font-size:30px;margin-top:15px}
+.section-title{font-size:30px;font-weight:900;margin:24px 0 4px}.subtitle{color:var(--muted);font-size:17px;margin:0 0 16px}
+.offers{display:flex;gap:13px;overflow-x:auto;overflow-y:hidden;padding:4px 2px 14px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}.offers>.offer,.offers>.empty-offers{flex:0 0 min(78vw,270px);scroll-snap-align:start}
+.offer{background:white;border:1px solid #d5edff;border-radius:22px;padding:15px;box-shadow:0 5px 14px #74bce833;min-width:0}
+.offer-top{display:flex;align-items:center;gap:10px;min-height:86px}
+.provider-icon{width:58px;height:58px;flex-shrink:0;border-radius:16px;display:grid;place-items:center;font-size:22px;font-weight:bold;color:white;overflow:hidden}
+.provider-icon img{width:100%;height:100%;object-fit:contain;background:white;border-radius:12px}
+.offer h3{font-size:19px;margin:0 0 7px;overflow-wrap:anywhere}.offer p{font-size:14px;color:var(--muted);line-height:1.35;margin:0}
+.earn{margin-top:12px;width:100%;border:0;border-radius:30px;padding:13px 5px;background:var(--blue);color:white;font-weight:bold}
+.earn:disabled{background:#aabbd0;color:#fff;cursor:not-allowed}
+.empty-offers{grid-column:1/-1;background:#fff;border:1px dashed #b9d9ef;border-radius:18px;padding:20px;text-align:center;color:var(--muted);line-height:1.6}
+.panel{background:white;border-radius:28px;padding:22px;margin:18px 0;box-shadow:0 5px 20px #80c9f433}
+.panel h2{margin:0 0 20px;font-size:30px}.small{font-size:14px;color:var(--muted);line-height:1.6}
+.field-label{display:block;margin:16px 0 8px}input,select{width:100%;padding:15px;border:1px solid #cfe7f7;border-radius:14px;font-size:16px;background:white}
+.primary{width:100%;border:0;border-radius:14px;padding:15px;background:linear-gradient(110deg,var(--sky),var(--crimson));color:white;font-size:17px;font-weight:bold;margin-top:15px}
+.amounts{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.amount{border:2px solid #d9efff;background:#f8fcff;color:#12366f;padding:15px;border-radius:18px;font-weight:bold}
+.amount.selected{border-color:var(--blue);background:#e3f4ff}.amount.low{opacity:.45}#yjToast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translate(-50%,40px);max-width:88vw;padding:13px 18px;border-radius:16px;background:#12366f;color:#fff;font-weight:700;font-size:15px;text-align:center;box-shadow:0 10px 28px #0006;opacity:0;pointer-events:none;transition:.25s;z-index:9999}#yjToast.show{opacity:1;transform:translate(-50%,0)}#yjToast.bad{background:#c01e3c}#yjToast.ok{background:#12935a}.withdraw-methods{display:flex;flex-direction:row;flex-wrap:nowrap;gap:12px;overflow-x:auto;overflow-y:hidden;padding:6px 2px 14px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}.withdraw-methods::-webkit-scrollbar{height:5px}.withdraw-methods::-webkit-scrollbar-thumb{background:#c7e6fa;border-radius:8px}.withdraw-method{display:flex;align-items:center;gap:10px;text-align:right;border:2px solid #d9efff;background:#fff;color:var(--dark);padding:13px;border-radius:16px;font-weight:bold;min-width:0}.withdraw-method.selected{border-color:var(--blue);background:#eaf6ff}.withdraw-method img{width:42px;height:42px;object-fit:contain;border-radius:10px}.withdraw-method .method-fallback{width:42px;height:42px;display:grid;place-items:center;background:#e3f4ff;border-radius:10px;font-size:20px}.withdraw-method span:last-child{overflow-wrap:anywhere}.withdraw-status{grid-column:1/-1}
+.social{display:flex;align-items:center;gap:13px;padding:14px 12px;margin:10px 0;border:1px solid #d9efff;border-radius:15px;background:#f8fcff;color:var(--dark);text-decoration:none;font-weight:bold}
+.social-icon{font-size:24px;width:35px;text-align:center}
+.id-box{background:#eff7ff;border-radius:14px;padding:15px;display:flex;justify-content:space-between;align-items:center;gap:8px;overflow-wrap:anywhere}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#ffffffed;backdrop-filter:blur(12px);border-radius:25px 25px 0 0;display:flex;justify-content:space-around;padding:12px 10px 18px;box-shadow:0 -5px 25px #74bce822}
+.nav{border:0;background:transparent;color:#829cba;font-size:16px;font-weight:bold;min-width:100px}.nav .ico{display:block;font-size:27px;margin-bottom:4px}.nav.active{color:var(--blue)}
+.notice{display:none!important}
+.banned-screen{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(145deg,#dff8ff,#fff5f7,#e6f7ff);text-align:center}
+.banned-screen[hidden]{display:none!important}.banned-card{width:100%;max-width:420px;padding:30px 22px;border-radius:28px;background:#fff;box-shadow:0 8px 30px #12387820}
+.banned-card h2{color:#d32f2f;margin:12px 0;font-size:27px}.banned-card p{color:#52657c;line-height:1.8;margin:0}
+@media(max-width:390px){header{padding:16px 10px}.brand{font-size:25px}.star{font-size:31px}.balance{padding:10px;font-size:17px}.wallet{font-size:67px}.banner{padding:17px;gap:9px}.offer{padding:10px}.provider-icon{width:45px;height:45px}.offer h3{font-size:16px}.offer p{font-size:12px}}
+.terms-overlay{position:fixed;inset:0;z-index:100000;background:#071b35d9;display:flex;align-items:center;justify-content:center;padding:16px}
+.terms-overlay[hidden]{display:none!important}.terms-card{width:100%;max-width:520px;max-height:90vh;overflow:auto;background:#fff;border-radius:24px;padding:24px;box-shadow:0 18px 60px #0005;color:#183153}
+.terms-card h2{margin:0 0 12px;color:#0878d7}.terms-card p,.terms-card li{line-height:1.75;font-size:14px}.terms-actions{display:flex;gap:10px;align-items:center;margin-top:18px}.terms-actions button{flex:1;border:0;border-radius:13px;padding:14px;font-weight:bold}.terms-accept{background:#0878d7;color:white}.terms-decline{background:#edf2f7;color:#42536a}
+.withdraw-method{min-height:132px;flex-direction:column;justify-content:center;gap:12px;padding:18px 12px;border-radius:22px;background:linear-gradient(145deg,#fff,#f2f9ff);box-shadow:0 7px 18px #277ab51a;transition:transform .18s,box-shadow .18s}
+.withdraw-method:active{transform:scale(.985)}
+.method-image-view{position:fixed;inset:0;z-index:100001;background:#06182dcc;display:flex;align-items:center;justify-content:center;padding:24px}.method-image-view[hidden]{display:none!important}.method-image-view img{max-width:min(82vw,360px);max-height:70vh;object-fit:contain;background:#fff;border-radius:28px;padding:18px;box-shadow:0 18px 55px #0007;animation:popIn .28s ease-out}@keyframes popIn{from{transform:scale(.72);opacity:.3}to{transform:scale(1);opacity:1}}
+.withdraw-method{flex:0 0 148px;width:148px;min-height:154px;scroll-snap-align:start;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:14px 10px;border:2px solid #d9efff;border-radius:22px}
+.withdraw-method img,.withdraw-method .method-fallback{width:88px;height:88px;object-fit:contain;border-radius:18px;flex-shrink:0}
+.withdraw-method span:last-child{font-size:16px;text-align:center}
+.withdraw-method.selected{flex:0 0 100%;width:100%;min-height:170px;flex-direction:row;justify-content:flex-start;gap:24px;padding:20px 24px;scroll-snap-align:center}
+.withdraw-method.selected img,.withdraw-method.selected .method-fallback{width:132px;height:132px;border-radius:24px}
+.withdraw-method.selected span:last-child{font-size:24px;text-align:start}
+.withdraw-method[hidden]{display:none!important}
+@media(max-width:390px){.withdraw-method{flex-basis:140px;width:140px;min-height:145px}.withdraw-method img,.withdraw-method .method-fallback{width:80px;height:80px}.withdraw-method.selected{flex-basis:100%;width:100%;min-height:150px;gap:18px;padding:16px}.withdraw-method.selected img,.withdraw-method.selected .method-fallback{width:112px;height:112px}.withdraw-method.selected span:last-child{font-size:22px}}
+/* Remove the logo frame while keeping the image itself */
+.withdraw-method img{background:transparent!important;box-shadow:none!important;border:0!important;padding:0!important}
+.withdraw-method.selected img{filter:none!important;transform:none!important}
+#showMethodsBtn{display:none}
+/* ===== Offer walls: big, full-width, horizontal cards ===== */
+.offers{gap:14px;padding:4px 0 10px}
+.offers>.offer,.offers>.empty-offers{flex:0 0 100%;scroll-snap-align:center}
+.offer{padding:0;overflow:hidden;border-radius:28px;border:1px solid #cfe9fb;box-shadow:0 12px 30px #3a8fd02e}
+.offer-hero{height:clamp(210px,62vw,320px);background:linear-gradient(145deg,#dff4ff,#fff5f7);display:grid;place-items:center;overflow:hidden}
+.offer-hero img{width:100%;height:100%;object-fit:contain;padding:14px}
+.offer-hero .hero-fallback{font-size:92px;font-weight:900;color:#0758a8}
+.offer-body{padding:16px 18px 18px}
+.offer-body h3{font-size:25px;margin:0 0 6px;overflow-wrap:anywhere}
+.offer-body p{font-size:15px;color:var(--muted);line-height:1.45;margin:0}
+.offer-body .earn{margin-top:16px;padding:17px 8px;font-size:19px}
+.offer-dots{display:flex;justify-content:center;gap:7px;margin:0 0 6px}
+.offer-dots i{width:8px;height:8px;border-radius:8px;background:#c9e3f5;transition:width .2s,background .2s}
+.offer-dots i.on{width:24px;background:var(--blue)}
+/* ===== Wall viewer + loading splash ===== */
+.wall-viewer{position:fixed;inset:0;z-index:100002;background:#fff;display:flex;flex-direction:column}
+.wall-viewer[hidden]{display:none!important}
+.wall-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:linear-gradient(110deg,#078fce,#16bdf2 55%,#dc143c);color:#fff}
+.wall-bar strong{flex:1;text-align:center;font-size:17px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wall-bar button,.wall-bar a{border:0;border-radius:12px;background:#ffffff33;color:#fff;font-weight:bold;font-size:16px;padding:9px 13px;text-decoration:none;min-width:44px;text-align:center}
+.wall-stage{position:relative;flex:1;min-height:0;background:#fff}
+.wall-stage iframe{width:100%;height:100%;border:0;background:#fff;display:block}
+.wall-splash{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;background:linear-gradient(160deg,#e8f8ff,#fff5f7 55%,#dff2ff);transition:opacity .55s ease;overflow:hidden}
+.wall-splash[hidden]{display:none!important}
+.wall-splash.done{opacity:0;pointer-events:none}
+.wall-splash h2{margin:6px 0 0;font-size:26px;color:#0878d7}
+.wall-splash p{margin:0;color:var(--muted);font-size:16px}
+.splash-card{width:min(62vw,250px);height:min(62vw,250px);border-radius:38px;background:#fff;display:grid;place-items:center;overflow:hidden;box-shadow:0 20px 55px #1d8ad040;animation:splashPulse 1.9s ease-in-out infinite}
+.splash-card img{width:100%;height:100%;object-fit:contain;padding:18px}
+.splash-card .hero-fallback{font-size:96px;font-weight:900;color:#0758a8}
+.splash-bar{width:min(70vw,290px);height:8px;border-radius:8px;background:#d3eafa;overflow:hidden}
+.splash-bar i{display:block;height:100%;width:42%;border-radius:8px;background:linear-gradient(90deg,#16bdf2,#dc143c);animation:splashSlide 1.3s ease-in-out infinite}
+.wall-splash .fc{position:absolute;font-size:28px;opacity:.75;animation:coinFloat 4.2s ease-in-out infinite}
+.fc.c1{left:12%;top:16%}.fc.c2{right:14%;top:22%;animation-delay:.9s}.fc.c3{left:18%;bottom:18%;animation-delay:1.7s}.fc.c4{right:12%;bottom:14%;animation-delay:2.4s}
+@keyframes splashPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+@keyframes splashSlide{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
+@keyframes coinFloat{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-16px) rotate(10deg)}}
+@media(prefers-reduced-motion:reduce){.splash-card,.splash-bar i,.wall-splash .fc{animation:none}}
+/* ===== wall cards: 2-column grid, square image tile ===== */
+.offers{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;overflow:visible!important;scroll-snap-type:none!important;padding:4px 2px 12px}
+.offers>.offer,.offers>.empty-offers{flex:none;grid-column:auto;scroll-snap-align:none}
+.offers>.empty-offers{grid-column:1/-1}
+.offer{padding:14px;border-radius:24px;border:1px solid #d5edff;box-shadow:0 6px 16px #74bce833;text-align:center}
+.offer-hero{height:auto;aspect-ratio:1/.9;border-radius:20px;background:#e3f2ff;padding:0}
+.offer-hero img{padding:10px;border-radius:16px}
+.offer-hero .hero-fallback{font-size:54px}
+.offer-body{padding:12px 0 0}
+.offer-body h3{font-size:19px;margin:0}
+.offer-body p{display:none}
+.offer-body .earn{margin-top:12px;padding:13px 4px;font-size:16px;border-radius:30px}
+.offer-dots{display:none}
+@media(max-width:390px){.offer{padding:10px}.offer-body h3{font-size:16px}}
+/* ===== launch splash ===== */
+#appSplash{position:fixed;inset:0;z-index:200000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:24px;text-align:center;background:linear-gradient(160deg,#e3f6ff 0%,#fff3f6 55%,#dff2ff 100%);transition:opacity .6s ease,visibility .6s}
+#appSplash.done{opacity:0;visibility:hidden;pointer-events:none}
+#appSplash .sp-logo{width:min(46vw,190px);height:min(46vw,190px);border-radius:46px;background:linear-gradient(145deg,#16bdf2,#0a7fd8 55%,#dc143c);display:grid;place-items:center;font-size:84px;box-shadow:0 22px 60px #1d8ad055;animation:spPulse 1.9s ease-in-out infinite}
+#appSplash h1{margin:6px 0 0;font-size:38px;color:#0b4a8e;letter-spacing:1px}
+#appSplash p{margin:0;color:#6b84a0;font-size:16px}
+#appSplash .sp-bar{width:min(64vw,260px);height:8px;border-radius:8px;background:#d3eafa;overflow:hidden}
+#appSplash .sp-bar i{display:block;height:100%;width:42%;border-radius:8px;background:linear-gradient(90deg,#16bdf2,#dc143c);animation:spSlide 1.3s ease-in-out infinite}
+#appSplash .sp-c{position:absolute;font-size:30px;opacity:.8;animation:spFloat 4.2s ease-in-out infinite}
+.sp-c.a{left:12%;top:14%}.sp-c.b{right:13%;top:20%;animation-delay:.9s}.sp-c.c{left:16%;bottom:16%;animation-delay:1.7s}.sp-c.d{right:12%;bottom:13%;animation-delay:2.4s}
+@keyframes spPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes spSlide{0%{transform:translateX(-110%)}100%{transform:translateX(260%)}}
+@keyframes spFloat{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-16px) rotate(10deg)}}
+@media(prefers-reduced-motion:reduce){#appSplash .sp-logo,#appSplash .sp-bar i,#appSplash .sp-c{animation:none}}
+/* ===== balance card (withdraw) ===== */
+.coins-card{background:linear-gradient(120deg,#078fce 0%,#16bdf2 55%,#dc143c 140%);color:#fff;border-radius:22px;padding:22px;text-align:center;font-size:28px;box-shadow:0 10px 24px #16bdf244}
+.coins-card .cc-label{font-size:17px;opacity:.95}
+.coins-card.docked{margin:14px 0;padding:14px;font-size:24px;border-radius:18px}
+/* ===== wall cards v2: wide & short ===== */
+.offer-hero{aspect-ratio:16/9!important;height:auto!important}
+.offer-hero img{object-fit:contain;padding:8px!important}
+.offers>.offer:last-child:nth-child(odd){grid-column:1/-1}
+.offers>.offer:last-child:nth-child(odd) .offer-hero{aspect-ratio:21/9!important}
+.offer-body .earn{white-space:nowrap}
+
+/* ===== wall cards v3: swipeable carousel (like a native app) ===== */
+.offers{display:flex!important;flex-wrap:nowrap;overflow-x:auto!important;overflow-y:hidden!important;scroll-snap-type:x mandatory!important;gap:12px;padding:4px 4px 14px!important;scroll-padding:0 4px;scrollbar-width:none;overscroll-behavior-x:contain}
+.offers::-webkit-scrollbar{display:none}
+.offers>.offer{flex:0 0 clamp(146px,41vw,200px)!important;grid-column:auto!important;scroll-snap-align:start!important;padding:9px!important;border-radius:20px;transition:transform .15s ease,box-shadow .15s ease;animation:offerIn .45s ease both}
+.offers>.offer:nth-child(2){animation-delay:.05s}.offers>.offer:nth-child(3){animation-delay:.1s}.offers>.offer:nth-child(4){animation-delay:.15s}
+.offers>.offer:active{transform:scale(.97)}
+.offers>.empty-offers{flex:0 0 100%!important}
+.offers>.offer:last-child:nth-child(odd) .offer-hero{aspect-ratio:16/9!important}
+.offer-hero{aspect-ratio:16/9!important;border-radius:14px!important;background:#e3f2ff}
+.offer-hero img{object-fit:cover!important;padding:0!important;border-radius:14px!important}
+.offer-hero .hero-fallback{font-size:40px}
+.offer-body{padding:9px 0 0!important}
+.offer-body h3{font-size:16px!important;font-weight:800}
+.offer-body .earn{margin-top:9px!important;padding:11px 4px!important;font-size:14.5px!important;border-radius:26px!important;display:flex;align-items:center;justify-content:center;gap:5px}
+.offer-body .earn:active:not(:disabled){transform:scale(.96)}
+.offer-dots{display:flex!important;justify-content:center;gap:7px;margin:0 0 8px}
+@keyframes offerIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+/* ===== native-app feel ===== */
+html{-webkit-text-size-adjust:100%;overscroll-behavior-y:none}
+body{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation;overscroll-behavior-y:none}
+input,textarea,[contenteditable],.selectable{-webkit-user-select:text;user-select:text}
+img{-webkit-user-drag:none;user-drag:none}
+button,.menu-item,nav button{cursor:pointer;transition:transform .12s ease,opacity .12s ease}
+button:active:not(:disabled){transform:scale(.97)}
+.wall-bar{padding-top:calc(10px + env(safe-area-inset-top))}
+body{padding-bottom:env(safe-area-inset-bottom)}
+/* ===== app themes (set from the admin app) ===== */
+html[data-theme="gold"]{--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Cg opacity=%220.5%22%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%2216%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%2210.9%22 fill=%22none%22 stroke=%22%23c48a00%22 stroke-width=%221.4%22/%3E%3Ctext x=%2232%22 y=%2237.8%22 font-size=%2216.8%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23c48a00%22 font-family=%22Arial,Helvetica,sans-serif%22%3E%24%3C/text%3E%3Ccircle cx=%2292%22 cy=%2288%22 r=%2213%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Ccircle cx=%2292%22 cy=%2288%22 r=%228.8%22 fill=%22none%22 stroke=%22%23c48a00%22 stroke-width=%221.4%22/%3E%3Ctext x=%2292%22 y=%2292.7%22 font-size=%2213.7%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23c48a00%22 font-family=%22Arial,Helvetica,sans-serif%22%3E%24%3C/text%3E%3Cpolygon points=%2267.8,12 92.2,12 98,30 62,30%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Cpolygon points=%2270.6,15.6 89.4,15.6 93.0,26.4 67.0,26.4%22 fill=%22%23ffe58a%22/%3E%3Cpolygon points=%2214.8,82 35.2,82 40,97 10,97%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Cpolygon points=%2217.2,85.0 32.8,85.0 35.8,94.0 14.2,94.0%22 fill=%22%23ffe58a%22/%3E%3Cpath d=%22M96 46 Q96 52 102 52 Q96 52 96 58 Q96 52 90 52 Q96 52 96 46z%22 fill=%22%23fff3b0%22/%3E%3Cpath d=%22M52 93 Q52 98 57 98 Q52 98 52 103 Q52 98 47 98 Q52 98 52 93z%22 fill=%22%23fff3b0%22/%3E%3C/g%3E%3C/svg%3E");--pats:90px 90px;--bg:linear-gradient(160deg,#ffecb0,#fff7dc 50%,#ffe39a);--card:#fffdf4;--cardb:#f2cf6b;--txt:#5a3d00;--mut:#9c7a2a;--acc:#e8a200;--acc2:#ff7a1a;--onacc:#3a2500;--hero:linear-gradient(130deg,#f5b800,#ffd861 55%,#ff9a3c);--chip:#fff3cf;--nav:rgba(255,251,235,.96);color-scheme:light}
+html[data-theme="dollar"]{--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Cg opacity=%220.42%22%3E%3Cg transform=%22rotate(-10 31.0 26.0)%22%3E%3Crect x=%226%22 y=%2212%22 width=%2250%22 height=%2228%22 rx=%224%22 fill=%22%232fb860%22 stroke=%22%23167a3a%22 stroke-width=%222%22/%3E%3Crect x=%2210%22 y=%2216%22 width=%2242%22 height=%2220%22 rx=%222%22 fill=%22none%22 stroke=%22%23167a3a%22 stroke-width=%221%22 stroke-opacity=%22.7%22/%3E%3Ccircle cx=%2231.0%22 cy=%2226.0%22 r=%227.8%22 fill=%22none%22 stroke=%22%23167a3a%22 stroke-width=%221.6%22/%3E%3Ctext x=%2231.0%22 y=%2230.8%22 font-size=%2211.8%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23167a3a%22 font-family=%22Arial,sans-serif%22%3E%24%3C/text%3E%3C/g%3E%3Cg transform=%22rotate(8 87.0 86.0)%22%3E%3Crect x=%2262%22 y=%2272%22 width=%2250%22 height=%2228%22 rx=%224%22 fill=%22%232fb860%22 stroke=%22%23167a3a%22 stroke-width=%222%22/%3E%3Crect x=%2266%22 y=%2276%22 width=%2242%22 height=%2220%22 rx=%222%22 fill=%22none%22 stroke=%22%23167a3a%22 stroke-width=%221%22 stroke-opacity=%22.7%22/%3E%3Ccircle cx=%2287.0%22 cy=%2286.0%22 r=%227.8%22 fill=%22none%22 stroke=%22%23167a3a%22 stroke-width=%221.6%22/%3E%3Ctext x=%2287.0%22 y=%2290.8%22 font-size=%2211.8%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23167a3a%22 font-family=%22Arial,sans-serif%22%3E%24%3C/text%3E%3C/g%3E%3Ctext x=%2292%22 y=%2236%22 font-size=%2224%22 font-weight=%22bold%22 fill=%22%231e9e4a%22 font-family=%22Arial%22%3E%24%3C/text%3E%3Ctext x=%2226%22 y=%22100%22 font-size=%2220%22 font-weight=%22bold%22 fill=%22%231e9e4a%22 font-family=%22Arial%22%3E%24%3C/text%3E%3C/g%3E%3C/svg%3E");--pats:90px 90px;--bg:linear-gradient(160deg,#cdf3d6,#effdf1 50%,#cdeedb);--card:#ffffff;--cardb:#a3e0b1;--txt:#0f4d27;--mut:#4f8a63;--acc:#1e9e4a;--acc2:#0f7a8a;--onacc:#ffffff;--hero:linear-gradient(130deg,#12923f,#3cc46d 55%,#a5dc5a);--chip:#e6f8ea;--nav:rgba(255,255,255,.96);color-scheme:light}
+html[data-theme="piggy"]{--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Cg opacity=%220.55%22%3E%3Cg transform=%22translate(34 40) scale(1)%22%3E%3Cellipse cx=%220%22 cy=%224%22 rx=%2222%22 ry=%2217%22 fill=%22%23ff8fb8%22 stroke=%22%23d9527f%22 stroke-width=%222%22/%3E%3Cpolygon points=%22-12,-10 -6,-22 0,-12%22 fill=%22%23ff8fb8%22 stroke=%22%23d9527f%22 stroke-width=%222%22/%3E%3Cellipse cx=%2222%22 cy=%226%22 rx=%228%22 ry=%226.5%22 fill=%22%23ffb0cd%22 stroke=%22%23d9527f%22 stroke-width=%222%22/%3E%3Ccircle cx=%2220%22 cy=%225%22 r=%221.4%22 fill=%22%23d9527f%22/%3E%3Ccircle cx=%2225%22 cy=%225%22 r=%221.4%22 fill=%22%23d9527f%22/%3E%3Ccircle cx=%2210%22 cy=%22-3%22 r=%222.2%22 fill=%22%236b2342%22/%3E%3Crect x=%22-14%22 y=%2218%22 width=%227%22 height=%2210%22 rx=%222%22 fill=%22%23ff8fb8%22 stroke=%22%23d9527f%22 stroke-width=%222%22/%3E%3Crect x=%228%22 y=%2218%22 width=%227%22 height=%2210%22 rx=%222%22 fill=%22%23ff8fb8%22 stroke=%22%23d9527f%22 stroke-width=%222%22/%3E%3Cpath d=%22M-22 2c-8-2-9-9-4-10%22 fill=%22none%22 stroke=%22%23d9527f%22 stroke-width=%222%22/%3E%3Crect x=%22-7%22 y=%22-14%22 width=%2214%22 height=%223.5%22 rx=%221.7%22 fill=%22%23a83a63%22/%3E%3C/g%3E%3Ccircle cx=%2294%22 cy=%2290%22 r=%2212%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Ccircle cx=%2294%22 cy=%2290%22 r=%228.2%22 fill=%22none%22 stroke=%22%23c48a00%22 stroke-width=%221.4%22/%3E%3Ctext x=%2294%22 y=%2294.3%22 font-size=%2212.6%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23c48a00%22 font-family=%22Arial,Helvetica,sans-serif%22%3E%24%3C/text%3E%3Ccircle cx=%2292%22 cy=%2224%22 r=%227%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Ccircle cx=%2292%22 cy=%2224%22 r=%224.8%22 fill=%22none%22 stroke=%22%23c48a00%22 stroke-width=%221.4%22/%3E%3Ctext x=%2292%22 y=%2226.5%22 font-size=%227.4%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23c48a00%22 font-family=%22Arial,Helvetica,sans-serif%22%3E%24%3C/text%3E%3Ccircle cx=%2220%22 cy=%22100%22 r=%226%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Ccircle cx=%2220%22 cy=%22100%22 r=%224.1%22 fill=%22none%22 stroke=%22%23c48a00%22 stroke-width=%221.4%22/%3E%3Ctext x=%2220%22 y=%22102.2%22 font-size=%226.3%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23c48a00%22 font-family=%22Arial,Helvetica,sans-serif%22%3E%24%3C/text%3E%3C/g%3E%3C/svg%3E");--pats:90px 90px;--bg:linear-gradient(160deg,#ffd6e6,#fff0f5 50%,#ffd9ec);--card:#ffffff;--cardb:#ffc0da;--txt:#5a1a3c;--mut:#a0597f;--acc:#ff4f93;--acc2:#ff9a62;--onacc:#ffffff;--hero:linear-gradient(130deg,#ff5fa2,#ff8fb8 55%,#ffb36b);--chip:#ffeaf3;--nav:rgba(255,255,255,.96);color-scheme:light}
+html[data-theme="diamond"]{--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Cg opacity=%220.55%22%3E%3Cg transform=%22translate(32 34)%22%3E%3Cpolygon points=%22-16,-4.0 -8.8,-12.8 8.8,-12.8 16,-4.0 0,16%22 fill=%22%237fdcff%22 stroke=%22%231f8ab8%22 stroke-width=%222%22 stroke-linejoin=%22round%22/%3E%3Cpolyline points=%22-16,-4.0 16,-4.0%22 fill=%22none%22 stroke=%22%231f8ab8%22 stroke-width=%221.5%22/%3E%3Cpolyline points=%22-8.8,-12.8 -4.8,-4.0 0,16 4.8,-4.0 8.8,-12.8%22 fill=%22none%22 stroke=%22%231f8ab8%22 stroke-width=%221.2%22/%3E%3C/g%3E%3Cg transform=%22translate(92 88)%22%3E%3Cpolygon points=%22-13,-3.2 -7.2,-10.4 7.2,-10.4 13,-3.2 0,13%22 fill=%22%23c7b8ff%22 stroke=%22%236a56d6%22 stroke-width=%222%22 stroke-linejoin=%22round%22/%3E%3Cpolyline points=%22-13,-3.2 13,-3.2%22 fill=%22none%22 stroke=%22%236a56d6%22 stroke-width=%221.5%22/%3E%3Cpolyline points=%22-7.2,-10.4 -3.9,-3.2 0,13 3.9,-3.2 7.2,-10.4%22 fill=%22none%22 stroke=%22%236a56d6%22 stroke-width=%221.2%22/%3E%3C/g%3E%3Cpath d=%22M94 23 Q94 30 101 30 Q94 30 94 37 Q94 30 87 30 Q94 30 94 23z%22 fill=%22%238fd8ff%22/%3E%3Cpath d=%22M30 86 Q30 92 36 92 Q30 92 30 98 Q30 92 24 92 Q30 92 30 86z%22 fill=%22%23c7b8ff%22/%3E%3C/g%3E%3C/svg%3E");--pats:90px 90px;--bg:linear-gradient(160deg,#cdeeff,#f1fbff 50%,#e0dcff);--card:#ffffff;--cardb:#b7def7;--txt:#0d3b66;--mut:#5f87a8;--acc:#139fe6;--acc2:#7b6cf6;--onacc:#ffffff;--hero:linear-gradient(130deg,#1496e8,#4cc3ff 55%,#8a7cff);--chip:#e7f5ff;--nav:rgba(255,255,255,.96);color-scheme:light}
+html[data-theme="treasure"]{--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Cg opacity=%220.55%22%3E%3Cg transform=%22translate(34 40) scale(1)%22%3E%3Cpath d=%22M-9 -16 L-12 -24 Q0 -30 12 -24 L9 -16z%22 fill=%22%23d9a441%22 stroke=%22%238a5a12%22 stroke-width=%222%22/%3E%3Crect x=%22-10%22 y=%22-17%22 width=%2220%22 height=%224%22 rx=%222%22 fill=%22%238a5a12%22/%3E%3Cpath d=%22M-9 -14 Q-26 -2 -24 12 Q-22 26 0 26 Q22 26 24 12 Q26 -2 9 -14z%22 fill=%22%23d9a441%22 stroke=%22%238a5a12%22 stroke-width=%222%22/%3E%3Ctext x=%220%22 y=%2217%22 font-size=%2222%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%238a5a12%22 font-family=%22Arial,sans-serif%22%3E%24%3C/text%3E%3C/g%3E%3Ccircle cx=%2292%22 cy=%2230%22 r=%2211%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Ccircle cx=%2292%22 cy=%2230%22 r=%227.5%22 fill=%22none%22 stroke=%22%23c48a00%22 stroke-width=%221.4%22/%3E%3Ctext x=%2292%22 y=%2234.0%22 font-size=%2211.6%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23c48a00%22 font-family=%22Arial,Helvetica,sans-serif%22%3E%24%3C/text%3E%3Ccircle cx=%2284%22 cy=%2294%22 r=%2213%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Ccircle cx=%2284%22 cy=%2294%22 r=%228.8%22 fill=%22none%22 stroke=%22%23c48a00%22 stroke-width=%221.4%22/%3E%3Ctext x=%2284%22 y=%2298.7%22 font-size=%2213.7%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23c48a00%22 font-family=%22Arial,Helvetica,sans-serif%22%3E%24%3C/text%3E%3Cpath d=%22M18 93 Q18 98 23 98 Q18 98 18 103 Q18 98 13 98 Q18 98 18 93z%22 fill=%22%23ffe27a%22/%3E%3C/g%3E%3C/svg%3E");--pats:90px 90px;--bg:linear-gradient(160deg,#ffe6c2,#fff6e6 50%,#fadfae);--card:#fffdf8;--cardb:#f0c98a;--txt:#4d2f08;--mut:#9a7340;--acc:#d98a00;--acc2:#c2410c;--onacc:#ffffff;--hero:linear-gradient(130deg,#d98a00,#f2b640 55%,#e2682d);--chip:#fff1d9;--nav:rgba(255,250,240,.96);color-scheme:light}
+html[data-theme="night"]{--pat:none;--pats:90px 90px;--deco:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22420%22 height=%22900%22 viewBox=%220 0 420 900%22 preserveAspectRatio=%22xMidYMin slice%22%3E%3Cdefs%3E%3CradialGradient id=%22g%22 cx=%2250%25%22 cy=%2250%25%22 r=%2250%25%22%3E%3Cstop offset=%220%22 stop-color=%22%23fff6c9%22 stop-opacity=%22.75%22/%3E%3Cstop offset=%22.35%22 stop-color=%22%23cfd8ff%22 stop-opacity=%22.28%22/%3E%3Cstop offset=%221%22 stop-color=%22%238fa3ff%22 stop-opacity=%220%22/%3E%3C/radialGradient%3E%3CradialGradient id=%22m%22 cx=%2238%25%22 cy=%2234%25%22 r=%2272%25%22%3E%3Cstop offset=%220%22 stop-color=%22%23fffdf0%22/%3E%3Cstop offset=%22.6%22 stop-color=%22%23f6ebb8%22/%3E%3Cstop offset=%221%22 stop-color=%22%23e2d089%22/%3E%3C/radialGradient%3E%3Cfilter id=%22b%22 x=%22-30%25%22 y=%22-60%25%22 width=%22160%25%22 height=%22220%25%22%3E%3CfeGaussianBlur stdDeviation=%227%22/%3E%3C/filter%3E%3C/defs%3E%3Ccircle cx=%22300%22 cy=%22665%22 r=%22210%22 fill=%22url(%23g)%22/%3E%3Ccircle cx=%22300%22 cy=%22665%22 r=%2264%22 fill=%22url(%23m)%22/%3E%3Cg fill=%22%23cdbd78%22 fill-opacity=%22.42%22%3E%3Ccircle cx=%22281%22 cy=%22646%22 r=%2212%22/%3E%3Ccircle cx=%22321%22 cy=%22688%22 r=%2215%22/%3E%3Ccircle cx=%22304%22 cy=%22634%22 r=%226%22/%3E%3Ccircle cx=%22276%22 cy=%22686%22 r=%228%22/%3E%3Ccircle cx=%22326%22 cy=%22652%22 r=%225%22/%3E%3C/g%3E%3Cg transform=%22translate(210 655) scale(1.15)%22 opacity=%220.38%22 filter=%22url(%23b)%22%3E%3Cellipse cx=%220%22 cy=%220%22 rx=%2270%22 ry=%2222%22 fill=%22%23cfd9ff%22/%3E%3Cellipse cx=%22-46%22 cy=%228%22 rx=%2244%22 ry=%2217%22 fill=%22%23cfd9ff%22/%3E%3Cellipse cx=%2244%22 cy=%226%22 rx=%2250%22 ry=%2219%22 fill=%22%23cfd9ff%22/%3E%3Cellipse cx=%22-18%22 cy=%22-14%22 rx=%2240%22 ry=%2220%22 fill=%22%23cfd9ff%22/%3E%3Cellipse cx=%2222%22 cy=%22-17%22 rx=%2238%22 ry=%2219%22 fill=%22%23cfd9ff%22/%3E%3Cellipse cx=%2270%22 cy=%2212%22 rx=%2230%22 ry=%2213%22 fill=%22%23cfd9ff%22/%3E%3Cellipse cx=%22-76%22 cy=%2213%22 rx=%2228%22 ry=%2212%22 fill=%22%23cfd9ff%22/%3E%3C/g%3E%3Cg transform=%22translate(360 730) scale(1.0)%22 opacity=%220.3%22 filter=%22url(%23b)%22%3E%3Cellipse cx=%220%22 cy=%220%22 rx=%2270%22 ry=%2222%22 fill=%22%23bccaff%22/%3E%3Cellipse cx=%22-46%22 cy=%228%22 rx=%2244%22 ry=%2217%22 fill=%22%23bccaff%22/%3E%3Cellipse cx=%2244%22 cy=%226%22 rx=%2250%22 ry=%2219%22 fill=%22%23bccaff%22/%3E%3Cellipse cx=%22-18%22 cy=%22-14%22 rx=%2240%22 ry=%2220%22 fill=%22%23bccaff%22/%3E%3Cellipse cx=%2222%22 cy=%22-17%22 rx=%2238%22 ry=%2219%22 fill=%22%23bccaff%22/%3E%3Cellipse cx=%2270%22 cy=%2212%22 rx=%2230%22 ry=%2213%22 fill=%22%23bccaff%22/%3E%3Cellipse cx=%22-76%22 cy=%2213%22 rx=%2228%22 ry=%2212%22 fill=%22%23bccaff%22/%3E%3C/g%3E%3Cg transform=%22translate(70 790) scale(1.3)%22 opacity=%220.26%22 filter=%22url(%23b)%22%3E%3Cellipse cx=%220%22 cy=%220%22 rx=%2270%22 ry=%2222%22 fill=%22%23aebcf5%22/%3E%3Cellipse cx=%22-46%22 cy=%228%22 rx=%2244%22 ry=%2217%22 fill=%22%23aebcf5%22/%3E%3Cellipse cx=%2244%22 cy=%226%22 rx=%2250%22 ry=%2219%22 fill=%22%23aebcf5%22/%3E%3Cellipse cx=%22-18%22 cy=%22-14%22 rx=%2240%22 ry=%2220%22 fill=%22%23aebcf5%22/%3E%3Cellipse cx=%2222%22 cy=%22-17%22 rx=%2238%22 ry=%2219%22 fill=%22%23aebcf5%22/%3E%3Cellipse cx=%2270%22 cy=%2212%22 rx=%2230%22 ry=%2213%22 fill=%22%23aebcf5%22/%3E%3Cellipse cx=%22-76%22 cy=%2213%22 rx=%2228%22 ry=%2212%22 fill=%22%23aebcf5%22/%3E%3C/g%3E%3Cg transform=%22translate(280 845) scale(1.25)%22 opacity=%220.2%22 filter=%22url(%23b)%22%3E%3Cellipse cx=%220%22 cy=%220%22 rx=%2270%22 ry=%2222%22 fill=%22%239fb0f0%22/%3E%3Cellipse cx=%22-46%22 cy=%228%22 rx=%2244%22 ry=%2217%22 fill=%22%239fb0f0%22/%3E%3Cellipse cx=%2244%22 cy=%226%22 rx=%2250%22 ry=%2219%22 fill=%22%239fb0f0%22/%3E%3Cellipse cx=%22-18%22 cy=%22-14%22 rx=%2240%22 ry=%2220%22 fill=%22%239fb0f0%22/%3E%3Cellipse cx=%2222%22 cy=%22-17%22 rx=%2238%22 ry=%2219%22 fill=%22%239fb0f0%22/%3E%3Cellipse cx=%2270%22 cy=%2212%22 rx=%2230%22 ry=%2213%22 fill=%22%239fb0f0%22/%3E%3Cellipse cx=%22-76%22 cy=%2213%22 rx=%2228%22 ry=%2212%22 fill=%22%239fb0f0%22/%3E%3C/g%3E%3Cg transform=%22translate(80 520) scale(1.1)%22 opacity=%220.12%22 filter=%22url(%23b)%22%3E%3Cellipse cx=%220%22 cy=%220%22 rx=%2270%22 ry=%2222%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%22-46%22 cy=%228%22 rx=%2244%22 ry=%2217%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%2244%22 cy=%226%22 rx=%2250%22 ry=%2219%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%22-18%22 cy=%22-14%22 rx=%2240%22 ry=%2220%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%2222%22 cy=%22-17%22 rx=%2238%22 ry=%2219%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%2270%22 cy=%2212%22 rx=%2230%22 ry=%2213%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%22-76%22 cy=%2213%22 rx=%2228%22 ry=%2212%22 fill=%22%2393a6ee%22/%3E%3C/g%3E%3Cg transform=%22translate(340 300) scale(1.2)%22 opacity=%220.1%22 filter=%22url(%23b)%22%3E%3Cellipse cx=%220%22 cy=%220%22 rx=%2270%22 ry=%2222%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%22-46%22 cy=%228%22 rx=%2244%22 ry=%2217%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%2244%22 cy=%226%22 rx=%2250%22 ry=%2219%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%22-18%22 cy=%22-14%22 rx=%2240%22 ry=%2220%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%2222%22 cy=%22-17%22 rx=%2238%22 ry=%2219%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%2270%22 cy=%2212%22 rx=%2230%22 ry=%2213%22 fill=%22%2393a6ee%22/%3E%3Cellipse cx=%22-76%22 cy=%2213%22 rx=%2228%22 ry=%2212%22 fill=%22%2393a6ee%22/%3E%3C/g%3E%3C/svg%3E");--bg:linear-gradient(180deg,#121d4b 0%,#1c2a69 50%,#2a3a82 100%);--card:#25347a;--cardb:#4a5cae;--txt:#eef2ff;--mut:#aab6e8;--acc:#ffe08a;--acc2:#8fb4ff;--onacc:#2a1f00;--hero:linear-gradient(130deg,#3b4fc4,#5b7bf0 55%,#9bb4ff);--chip:#2f4090;--nav:rgba(30,42,104,.97);color-scheme:dark}
+html[data-theme="forest"]{--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Cg opacity=%220.5%22%3E%3Cg transform=%22translate(34 36) scale(1)%22%3E%3Crect x=%22-4%22 y=%226%22 width=%228%22 height=%2226%22 rx=%222%22 fill=%22%238a5a2b%22/%3E%3Cpath d=%22M0 32 l-9 4 M0 32 l9 4%22 stroke=%22%238a5a2b%22 stroke-width=%223%22 stroke-linecap=%22round%22/%3E%3Ccircle cx=%22-12%22 cy=%22-2%22 r=%2214%22 fill=%22%233fae6e%22 stroke=%22%231d6b45%22 stroke-width=%222%22/%3E%3Ccircle cx=%2212%22 cy=%22-2%22 r=%2214%22 fill=%22%233fae6e%22 stroke=%22%231d6b45%22 stroke-width=%222%22/%3E%3Ccircle cx=%220%22 cy=%22-14%22 r=%2215%22 fill=%22%233fae6e%22 stroke=%22%231d6b45%22 stroke-width=%222%22/%3E%3Ccircle cx=%220%22 cy=%222%22 r=%2214%22 fill=%22%233fae6e%22/%3E%3Ccircle cx=%22-12%22 cy=%220%22 r=%225%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%221.5%22/%3E%3Ccircle cx=%22-13.5%22 cy=%22-1.5%22 r=%221.4%22 fill=%22%23fff6c8%22/%3E%3Ccircle cx=%2210%22 cy=%22-4%22 r=%225%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%221.5%22/%3E%3Ccircle cx=%228.5%22 cy=%22-5.5%22 r=%221.4%22 fill=%22%23fff6c8%22/%3E%3Ccircle cx=%22-2%22 cy=%22-16%22 r=%225%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%221.5%22/%3E%3Ccircle cx=%22-3.5%22 cy=%22-17.5%22 r=%221.4%22 fill=%22%23fff6c8%22/%3E%3Ccircle cx=%222%22 cy=%228%22 r=%225%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%221.5%22/%3E%3Ccircle cx=%220.5%22 cy=%226.5%22 r=%221.4%22 fill=%22%23fff6c8%22/%3E%3Ccircle cx=%22-18%22 cy=%22-8%22 r=%225%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%221.5%22/%3E%3Ccircle cx=%22-19.5%22 cy=%22-9.5%22 r=%221.4%22 fill=%22%23fff6c8%22/%3E%3C/g%3E%3Cg transform=%22translate(94 92) scale(0.8)%22%3E%3Crect x=%22-4%22 y=%226%22 width=%228%22 height=%2226%22 rx=%222%22 fill=%22%238a5a2b%22/%3E%3Cpath d=%22M0 32 l-9 4 M0 32 l9 4%22 stroke=%22%238a5a2b%22 stroke-width=%223%22 stroke-linecap=%22round%22/%3E%3Ccircle cx=%22-12%22 cy=%22-2%22 r=%2214%22 fill=%22%233fae6e%22 stroke=%22%231d6b45%22 stroke-width=%222%22/%3E%3Ccircle cx=%2212%22 cy=%22-2%22 r=%2214%22 fill=%22%233fae6e%22 stroke=%22%231d6b45%22 stroke-width=%222%22/%3E%3Ccircle cx=%220%22 cy=%22-14%22 r=%2215%22 fill=%22%233fae6e%22 stroke=%22%231d6b45%22 stroke-width=%222%22/%3E%3Ccircle cx=%220%22 cy=%222%22 r=%2214%22 fill=%22%233fae6e%22/%3E%3Ccircle cx=%22-12%22 cy=%220%22 r=%225%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%221.5%22/%3E%3Ccircle cx=%22-13.5%22 cy=%22-1.5%22 r=%221.4%22 fill=%22%23fff6c8%22/%3E%3Ccircle cx=%2210%22 cy=%22-4%22 r=%225%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%221.5%22/%3E%3Ccircle cx=%228.5%22 cy=%22-5.5%22 r=%221.4%22 fill=%22%23fff6c8%22/%3E%3Ccircle cx=%22-2%22 cy=%22-16%22 r=%225%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%221.5%22/%3E%3Ccircle cx=%22-3.5%22 cy=%22-17.5%22 r=%221.4%22 fill=%22%23fff6c8%22/%3E%3Ccircle cx=%222%22 cy=%228%22 r=%225%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%221.5%22/%3E%3Ccircle cx=%220.5%22 cy=%226.5%22 r=%221.4%22 fill=%22%23fff6c8%22/%3E%3Ccircle cx=%22-18%22 cy=%22-8%22 r=%225%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%221.5%22/%3E%3Ccircle cx=%22-19.5%22 cy=%22-9.5%22 r=%221.4%22 fill=%22%23fff6c8%22/%3E%3C/g%3E%3Ccircle cx=%2292%22 cy=%2224%22 r=%226%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Ccircle cx=%2292%22 cy=%2224%22 r=%224.1%22 fill=%22none%22 stroke=%22%23c48a00%22 stroke-width=%221.4%22/%3E%3Ctext x=%2292%22 y=%2226.2%22 font-size=%226.3%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23c48a00%22 font-family=%22Arial,Helvetica,sans-serif%22%3E%24%3C/text%3E%3Ccircle cx=%2222%22 cy=%22100%22 r=%226%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Ccircle cx=%2222%22 cy=%22100%22 r=%224.1%22 fill=%22none%22 stroke=%22%23c48a00%22 stroke-width=%221.4%22/%3E%3Ctext x=%2222%22 y=%22102.2%22 font-size=%226.3%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23c48a00%22 font-family=%22Arial,Helvetica,sans-serif%22%3E%24%3C/text%3E%3C/g%3E%3C/svg%3E");--pats:100px 100px;--bg:linear-gradient(160deg,#134d38,#1c6a49 50%,#17563f);--card:#206148;--cardb:#418f6e;--txt:#eafff4;--mut:#a8dbc2;--acc:#ffd166;--acc2:#6ee7b7;--onacc:#2a1a00;--hero:linear-gradient(130deg,#12a06a,#3fd49a 55%,#e8c24a);--chip:#2b7456;--nav:rgba(24,86,62,.97);color-scheme:dark}
+html[data-theme="vault"]{--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Cg opacity=%220.5%22%3E%3Cpolygon points=%2214.4,12 41.6,12 48,32 8,32%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Cpolygon points=%2217.6,16.0 38.4,16.0 42.4,28.0 13.6,28.0%22 fill=%22%23ffe58a%22/%3E%3Cpolygon points=%2262.4,12 89.6,12 96,32 56,32%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Cpolygon points=%2265.6,16.0 86.4,16.0 90.4,28.0 61.6,28.0%22 fill=%22%23ffe58a%22/%3E%3Cpolygon points=%2238.4,34 65.6,34 72,54 32,54%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Cpolygon points=%2241.6,38.0 62.4,38.0 66.4,50.0 37.6,50.0%22 fill=%22%23ffe58a%22/%3E%3Ccircle cx=%2296%22 cy=%2290%22 r=%2214%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Ccircle cx=%2296%22 cy=%2290%22 r=%229.5%22 fill=%22none%22 stroke=%22%23c48a00%22 stroke-width=%221.4%22/%3E%3Ctext x=%2296%22 y=%2295.0%22 font-size=%2214.7%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23c48a00%22 font-family=%22Arial,Helvetica,sans-serif%22%3E%24%3C/text%3E%3Ccircle cx=%2230%22 cy=%2292%22 r=%2211%22 fill=%22%23ffd24a%22 stroke=%22%23c48a00%22 stroke-width=%222%22/%3E%3Ccircle cx=%2230%22 cy=%2292%22 r=%227.5%22 fill=%22none%22 stroke=%22%23c48a00%22 stroke-width=%221.4%22/%3E%3Ctext x=%2230%22 y=%2296.0%22 font-size=%2211.6%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23c48a00%22 font-family=%22Arial,Helvetica,sans-serif%22%3E%24%3C/text%3E%3Cpath d=%22M100 45 Q100 50 105 50 Q100 50 100 55 Q100 50 95 50 Q100 50 100 45z%22 fill=%22%23ffe27a%22/%3E%3C/g%3E%3C/svg%3E");--pats:100px 100px;--bg:linear-gradient(160deg,#5a1530,#7a1f40 50%,#681a3b);--card:#70214a;--cardb:#a64a6c;--txt:#fff0f4;--mut:#e3adc0;--acc:#ffc857;--acc2:#ff7a9a;--onacc:#2a1a00;--hero:linear-gradient(130deg,#b3123f,#e0405f 55%,#ff8a5c);--chip:#802c55;--nav:rgba(100,26,60,.97);color-scheme:dark}
+html[data-theme="crypto"]{--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22120%22 height=%22120%22 viewBox=%220 0 120 120%22%3E%3Cg opacity=%220.45%22%3E%3Ccircle cx=%2232%22 cy=%2234%22 r=%2216%22 fill=%22%23ffb347%22 stroke=%22%23c46a00%22 stroke-width=%222%22/%3E%3Ctext x=%2232%22 y=%2240.1%22 font-size=%2218.4%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23fff%22 font-family=%22Arial,sans-serif%22%3EB%3C/text%3E%3Cpath d=%22M30.1 21.5v4.8M34.4 21.5v4.8M30.1 42.8v4.8M34.4 42.8v4.8%22 stroke=%22%23fff%22 stroke-width=%222%22/%3E%3Ccircle cx=%2292%22 cy=%2290%22 r=%2212%22 fill=%22%23ffb347%22 stroke=%22%23c46a00%22 stroke-width=%222%22/%3E%3Ctext x=%2292%22 y=%2294.6%22 font-size=%2213.8%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23fff%22 font-family=%22Arial,sans-serif%22%3EB%3C/text%3E%3Cpath d=%22M90.6 80.6v3.6M93.8 80.6v3.6M90.6 96.6v3.6M93.8 96.6v3.6%22 stroke=%22%23fff%22 stroke-width=%222%22/%3E%3Cpolygon points=%22103.5,35.5 94.0,41.0 84.5,35.5 84.5,24.5 94.0,19.0 103.5,24.5%22 fill=%22none%22 stroke=%22%239ff5e6%22 stroke-width=%222%22/%3E%3Cpolygon points=%2233.8,96.5 26.0,101.0 18.2,96.5 18.2,87.5 26.0,83.0 33.8,87.5%22 fill=%22none%22 stroke=%22%239ff5e6%22 stroke-width=%222%22/%3E%3Cpath d=%22M48 34h24M70 34l8 6M78 40h14%22 stroke=%22%239ff5e6%22 stroke-width=%221.5%22 fill=%22none%22/%3E%3C/g%3E%3C/svg%3E");--pats:100px 100px;--bg:linear-gradient(160deg,#0e3f55,#12607a 50%,#0f4d68);--card:#17596f;--cardb:#37879f;--txt:#e8fbff;--mut:#9dd0e0;--acc:#ffb347;--acc2:#5ee6d0;--onacc:#2a1700;--hero:linear-gradient(130deg,#0f8fd8,#18c3d6 55%,#ffb347);--chip:#1d6a82;--nav:rgba(16,76,100,.97);color-scheme:dark}
+html[data-theme="candy"]{--pats:80px 80px;--deco:none;--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Cg fill=%22%23ff4f9a%22 fill-opacity=%220.2%22%3E%3Cpath transform=%22translate(8 10) scale(0.9)%22 d=%22M10 5C8 0 0 1 2 8c1.5 4 8 8 8 8s6.500-4 8-8C20 1 12 0 10 5z%22/%3E%3Cpath transform=%22translate(50 48) scale(0.7)%22 d=%22M10 5C8 0 0 1 2 8c1.5 4 8 8 8 8s6.500-4 8-8C20 1 12 0 10 5z%22/%3E%3Ccircle cx=%2252%22 cy=%2212%22 r=%224%22/%3E%3Ccircle cx=%2214%22 cy=%2258%22 r=%223.5%22/%3E%3Ccircle cx=%2270%22 cy=%2230%22 r=%222.5%22/%3E%3C/g%3E%3C/svg%3E");--bg:linear-gradient(160deg,#ffd9ec,#fff0f6 50%,#ffdcee);--card:#ffffff;--cardb:#ffc4de;--txt:#5a1a3c;--mut:#a0597f;--acc:#ff4f9a;--acc2:#ff9a5c;--onacc:#ffffff;--hero:linear-gradient(130deg,#ff5fa2,#ff8fb8 55%,#ffb36b);--chip:#ffeef6;--nav:rgba(255,255,255,.95);color-scheme:light}
+html[data-theme="mint"]{--pats:80px 80px;--deco:none;--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Cg fill=%22%231fb877%22 fill-opacity=%220.22%22%3E%3Cpath transform=%22translate(8 18) rotate(-30)%22 d=%22M0 0C6 -10 18 -10 22 0C18 10 6 10 0 0z%22/%3E%3Cpath transform=%22translate(46 56) rotate(30)%22 d=%22M0 0C6 -10 18 -10 22 0C18 10 6 10 0 0z%22/%3E%3Ccircle cx=%2258%22 cy=%2214%22 r=%223.5%22/%3E%3Ccircle cx=%2216%22 cy=%2262%22 r=%223%22/%3E%3C/g%3E%3C/svg%3E");--bg:linear-gradient(160deg,#d3f6e3,#f1fff7 50%,#d9f4e8);--card:#ffffff;--cardb:#b6ebcb;--txt:#124a33;--mut:#5b8f78;--acc:#1fb877;--acc2:#0f9ec9;--onacc:#ffffff;--hero:linear-gradient(130deg,#18b36f,#4fd6a0 55%,#27a8d8);--chip:#eafaf2;--nav:rgba(255,255,255,.95);color-scheme:light}
+html[data-theme="sunny"]{--pats:80px 80px;--deco:none;--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Cg fill=%22%23ff9a00%22 fill-opacity=%220.24%22%3E%3Cpolygon transform=%22translate(18 18)%22 points=%220,-11 3.3,-3.3 11,-2.2 5.5,2.8 6.6,11 0,5.5 -6.6,11 -5.5,2.8 -11,-2.2 -3.3,-3.3%22/%3E%3Cpolygon transform=%22translate(58 52)%22 points=%220,-9 2.7,-2.7 9,-1.8 4.5,2.2 5.4,9 0,4.5 -5.4,9 -4.5,2.2 -9,-1.8 -2.7,-2.7%22/%3E%3Ccircle cx=%2256%22 cy=%2214%22 r=%224%22/%3E%3Ccircle cx=%2214%22 cy=%2260%22 r=%223.5%22/%3E%3C/g%3E%3C/svg%3E");--bg:linear-gradient(160deg,#ffefb8,#fff8dc 50%,#ffe4a8);--card:#fffdf6;--cardb:#ffd98a;--txt:#5c3a00;--mut:#a07a30;--acc:#ff9a00;--acc2:#ff5d5d;--onacc:#ffffff;--hero:linear-gradient(130deg,#ffa600,#ffcf4a 55%,#ff6f61);--chip:#fff4d6;--nav:rgba(255,252,240,.96);color-scheme:light}
+html[data-theme="lavender"]{--pats:80px 80px;--deco:none;--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Cg fill=%22%238a5cf6%22 fill-opacity=%220.2%22%3E%3Cpolygon points=%2218,8 28,18 18,28 8,18%22/%3E%3Cpolygon points=%2258,42 66,50 58,58 50,50%22/%3E%3Ccircle cx=%2258%22 cy=%2214%22 r=%223%22/%3E%3Ccircle cx=%2216%22 cy=%2260%22 r=%223.5%22/%3E%3Cpath d=%22M40 30h8M44 26v8%22/%3E%3C/g%3E%3C/svg%3E");--bg:linear-gradient(160deg,#e6dcff,#f8f3ff 50%,#e9defc);--card:#ffffff;--cardb:#d6c7ff;--txt:#3a2470;--mut:#8470b5;--acc:#8a5cf6;--acc2:#e65cc2;--onacc:#ffffff;--hero:linear-gradient(130deg,#7b4ff0,#a883ff 55%,#e65cc2);--chip:#f1ebff;--nav:rgba(255,255,255,.95);color-scheme:light}
+html[data-theme="sky"]{--pats:80px 80px;--deco:none;--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Cg fill=%22%231aa3f0%22 fill-opacity=%220.2%22%3E%3Cg transform=%22translate(4 8)%22%3E%3Ccircle cx=%228%22 cy=%2210%22 r=%228%22/%3E%3Ccircle cx=%2220%22 cy=%226%22 r=%2210%22/%3E%3Ccircle cx=%2232%22 cy=%2211%22 r=%227%22/%3E%3Crect x=%222%22 y=%2210%22 width=%2236%22 height=%228%22 rx=%224%22/%3E%3C/g%3E%3Cg transform=%22translate(40 48)%22%3E%3Ccircle cx=%228%22 cy=%2210%22 r=%228%22/%3E%3Ccircle cx=%2220%22 cy=%226%22 r=%2210%22/%3E%3Ccircle cx=%2232%22 cy=%2211%22 r=%227%22/%3E%3Crect x=%222%22 y=%2210%22 width=%2236%22 height=%228%22 rx=%224%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");--bg:linear-gradient(160deg,#cfeeff,#f0faff 50%,#d4ecff);--card:#ffffff;--cardb:#b9e2fa;--txt:#0d3b66;--mut:#5f87a8;--acc:#1aa3f0;--acc2:#5b7cfa;--onacc:#ffffff;--hero:linear-gradient(130deg,#1496e8,#4cc3ff 55%,#6f8cff);--chip:#e8f6ff;--nav:rgba(255,255,255,.95);color-scheme:light}
+html[data-theme="galaxy"]{--pats:80px 80px;--deco:none;--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.32%22%3E%3Cpolygon transform=%22translate(16 16)%22 points=%220,-7 2.1,-2.1 7,-1.4 3.5,1.8 4.2,7 0,3.5 -4.2,7 -3.5,1.8 -7,-1.4 -2.1,-2.1%22/%3E%3Cpolygon transform=%22translate(56 44)%22 points=%220,-5 1.5,-1.5 5,-1.0 2.5,1.2 3.0,5 0,2.5 -3.0,5 -2.5,1.2 -5,-1.0 -1.5,-1.5%22/%3E%3Ccircle cx=%2240%22 cy=%2212%22 r=%222%22/%3E%3Ccircle cx=%2212%22 cy=%2258%22 r=%222.5%22/%3E%3Ccircle cx=%2266%22 cy=%2216%22 r=%221.8%22/%3E%3Ccircle cx=%2230%22 cy=%2240%22 r=%221.5%22/%3E%3Cpolygon transform=%22translate(32 68)%22 points=%220,-4 1.2,-1.2 4,-0.8 2.0,1.0 2.4,4 0,2.0 -2.4,4 -2.0,1.0 -4,-0.8 -1.2,-1.2%22/%3E%3C/g%3E%3C/svg%3E");--bg:linear-gradient(160deg,#2c2266,#3d2b82 50%,#512f80);--card:#3b3079;--cardb:#5d4fae;--txt:#f1eeff;--mut:#bdb4ea;--acc:#ffd166;--acc2:#ff7eb6;--onacc:#2a1a00;--hero:linear-gradient(130deg,#6c4cf0,#a05af0 55%,#ff6fb0);--chip:#473b8c;--nav:rgba(54,44,112,.96);color-scheme:dark}
+html[data-theme="wine"]{--pats:80px 80px;--deco:none;--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Cg fill=%22%23ffc857%22 fill-opacity=%220.26%22%3E%3Cpolygon points=%2220,9 31,20 20,31 9,20%22/%3E%3Cpolygon points=%2260,49 71,60 60,71 49,60%22/%3E%3Cpolygon points=%2260,16 64,20 60,24 56,20%22/%3E%3Cpolygon points=%2220,56 24,60 20,64 16,60%22/%3E%3C/g%3E%3C/svg%3E");--bg:linear-gradient(160deg,#5c1632,#7c1f42 50%,#6a1a3c);--card:#70214a;--cardb:#a64a6c;--txt:#fff0f4;--mut:#e3adc0;--acc:#ffc857;--acc2:#ff7a9a;--onacc:#2a1a00;--hero:linear-gradient(130deg,#b3123f,#e0405f 55%,#ff8a5c);--chip:#802c55;--nav:rgba(100,26,60,.96);color-scheme:dark}
+html[data-theme="woods"]{--pats:80px 80px;--deco:none;--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Cg fill=%22%23c8f5dc%22 fill-opacity=%220.22%22%3E%3Cpath transform=%22translate(6 22) rotate(-35)%22 d=%22M0 0C6 -10 18 -10 22 0C18 10 6 10 0 0z%22/%3E%3Cpath transform=%22translate(44 60) rotate(35)%22 d=%22M0 0C6 -10 18 -10 22 0C18 10 6 10 0 0z%22/%3E%3Cpath transform=%22translate(50 10) rotate(10)%22 d=%22M0 0C6 -10 18 -10 22 0C18 10 6 10 0 0z%22/%3E%3Ccircle cx=%2218%22 cy=%2262%22 r=%223%22/%3E%3C/g%3E%3C/svg%3E");--bg:linear-gradient(160deg,#154f3a,#1f6b4b 50%,#185a40);--card:#206148;--cardb:#418f6e;--txt:#eafff4;--mut:#a8dbc2;--acc:#ffd166;--acc2:#6ee7b7;--onacc:#2a1a00;--hero:linear-gradient(130deg,#12a06a,#3fd49a 55%,#e8c24a);--chip:#2b7456;--nav:rgba(24,86,62,.96);color-scheme:dark}
+html[data-theme="ocean"]{--pats:80px 80px;--deco:none;--pat:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2280%22 height=%2280%22 viewBox=%220 0 80 80%22%3E%3Cg fill=%22%23bfeeff%22 fill-opacity=%220.2%22%3E%3Cpath d=%22M0 20q10-12 20 0t20 0t20 0t20 0%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%223%22 stroke-opacity=%22.6%22/%3E%3Cpath d=%22M0 60q10-12 20 0t20 0t20 0t20 0%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%223%22 stroke-opacity=%22.6%22/%3E%3C/g%3E%3C/svg%3E");--bg:linear-gradient(160deg,#10496f,#146a8d 50%,#0f5a86);--card:#18618b;--cardb:#3b90b9;--txt:#eaf8ff;--mut:#a3d3ea;--acc:#5ee6d0;--acc2:#ffd166;--onacc:#06324a;--hero:linear-gradient(130deg,#0f8fd8,#18c3d6 55%,#5ee6b0);--chip:#1f73a1;--nav:rgba(19,88,130,.96);color-scheme:dark}
+html[data-theme]:not([data-theme="classic"]) body{background-image:var(--deco,none),var(--pat,none),var(--bg)!important;background-size:cover,var(--pats,90px 90px),cover!important;background-repeat:no-repeat,repeat,no-repeat!important;background-position:center top,0 0,center!important;background-attachment:fixed!important;color:var(--txt)}
+html[data-theme]:not([data-theme="classic"]) .brand{color:var(--acc)}
+html[data-theme]:not([data-theme="classic"]) .balance{background:var(--card);color:var(--txt)}
+html[data-theme]:not([data-theme="classic"]) .banner,html[data-theme]:not([data-theme="classic"]) .coins-card,html[data-theme]:not([data-theme="classic"]) .wall-bar{background:var(--hero)!important}
+html[data-theme]:not([data-theme="classic"]) .section-title,html[data-theme]:not([data-theme="classic"]) .panel,html[data-theme]:not([data-theme="classic"]) .panel h2,html[data-theme]:not([data-theme="classic"]) .offer-body h3,html[data-theme]:not([data-theme="classic"]) .offer h3,html[data-theme]:not([data-theme="classic"]) .withdraw-method,html[data-theme]:not([data-theme="classic"]) .amount,html[data-theme]:not([data-theme="classic"]) .social,html[data-theme]:not([data-theme="classic"]) .id-box,html[data-theme]:not([data-theme="classic"]) .terms-card{color:var(--txt)}
+html[data-theme]:not([data-theme="classic"]) .subtitle,html[data-theme]:not([data-theme="classic"]) .small,html[data-theme]:not([data-theme="classic"]) .offer p,html[data-theme]:not([data-theme="classic"]) .empty-offers,html[data-theme]:not([data-theme="classic"]) .nav{color:var(--mut)}
+html[data-theme]:not([data-theme="classic"]) .offer,html[data-theme]:not([data-theme="classic"]) .panel,html[data-theme]:not([data-theme="classic"]) .empty-offers,html[data-theme]:not([data-theme="classic"]) .terms-card,html[data-theme]:not([data-theme="classic"]) .banned-card{background:var(--card)!important;border-color:var(--cardb)}
+html[data-theme]:not([data-theme="classic"]) .offer-hero{background:var(--chip)!important}
+html[data-theme]:not([data-theme="classic"]) .earn:not(:disabled),html[data-theme]:not([data-theme="classic"]) .terms-accept{background:var(--acc)!important;color:var(--onacc)!important}
+html[data-theme]:not([data-theme="classic"]) .primary{background:linear-gradient(110deg,var(--acc),var(--acc2))!important;color:var(--onacc)!important}
+html[data-theme]:not([data-theme="classic"]) .offer-dots i{background:var(--cardb)}
+html[data-theme]:not([data-theme="classic"]) .offer-dots i.on{background:var(--acc)}
+html[data-theme]:not([data-theme="classic"]) .withdraw-method,html[data-theme]:not([data-theme="classic"]) .amount,html[data-theme]:not([data-theme="classic"]) .social,html[data-theme]:not([data-theme="classic"]) .id-box,html[data-theme]:not([data-theme="classic"]) input,html[data-theme]:not([data-theme="classic"]) select{background:var(--chip)!important;border-color:var(--cardb)!important;color:var(--txt)}
+html[data-theme]:not([data-theme="classic"]) .withdraw-method.selected,html[data-theme]:not([data-theme="classic"]) .amount.selected{border-color:var(--acc)!important}
+html[data-theme]:not([data-theme="classic"]) .bottom{background:var(--nav)}
+html[data-theme]:not([data-theme="classic"]) .nav.active{color:var(--acc)}
+html[data-theme]:not([data-theme="classic"]) .terms-card h2,html[data-theme]:not([data-theme="classic"]) #appSplash h1,html[data-theme]:not([data-theme="classic"]) .wall-splash h2{color:var(--acc)}
+html[data-theme]:not([data-theme="classic"]) .banned-screen,html[data-theme]:not([data-theme="classic"]) #appSplash,html[data-theme]:not([data-theme="classic"]) .wall-splash{background-image:var(--deco,none),var(--pat,none),var(--bg)!important;background-size:cover,var(--pats,90px 90px),cover!important;background-repeat:no-repeat,repeat,no-repeat!important;background-position:center top,0 0,center!important}
+html[data-theme]:not([data-theme="classic"]) .banned-card p{color:var(--mut)}
+html[data-theme]:not([data-theme="classic"]) .wall-bar strong,html[data-theme]:not([data-theme="classic"]) .wall-bar button{color:#fff}
+.no-nav .bottom{display:none!important}.no-nav{padding-bottom:24px!important}
+html[data-theme]:not([data-theme="classic"]) .offer,html[data-theme]:not([data-theme="classic"]) .panel{box-shadow:0 8px 24px #0002}
+html[data-theme]:not([data-theme="classic"]) .primary[onclick*="showPage("]:not(#acctBtn){background:var(--chip)!important;color:var(--txt)!important;border:1.5px solid var(--cardb)}
+html[data-theme]:not([data-theme="classic"]) #acctBtn{background:linear-gradient(110deg,#5b6cff,#9b4dff)!important;color:#fff!important;border:0}
+</style>
+<script>try{var __t=localStorage.getItem("yj_theme");__t=__t;if(__t)document.documentElement.setAttribute("data-theme",__t)}catch(e){}</script></head>
+<body>
+<div id="appSplash" role="status" aria-live="polite"><span class="sp-c a">🪙</span><span class="sp-c b">⭐</span><span class="sp-c c">💰</span><span class="sp-c d">🪙</span><div class="sp-logo">⭐</div><h1>YASJOY 👑</h1><p>Loading your rewards…</p><div class="sp-bar"><i></i></div></div>
+<script>window.__sp={user:false,walls:false,t0:Date.now()};window.splashDone=function(k){if(k)window.__sp[k]=true;if(!(window.__sp.user&&window.__sp.walls)&&k!=='force')return;var wait=Math.max(0,1300-(Date.now()-window.__sp.t0));setTimeout(function(){var e=document.getElementById('appSplash');if(e)e.classList.add('done');setTimeout(function(){if(e&&e.parentNode)e.parentNode.removeChild(e)},800)},wait)};setTimeout(function(){window.splashDone('force')},9000);</script>
+<section id="termsGate" class="terms-overlay" hidden aria-modal="true" role="dialog" aria-labelledby="termsTitle"><div class="terms-card"><div style="font-size:42px">📜</div><h2 id="termsTitle">YASJOY – Terms & Conditions</h2><p>Please read and accept these terms before using the app.</p><ol>
+<li>You must use accurate information. Fraud, abuse, and deceptive activity are prohibited.</li>
+<li>Coins are awarded only after the offer provider confirms and verifies completion.</li>
+<li>Offers and rewards may vary by country, device, and provider requirements. Availability is not guaranteed.</li>
+<li>Withdrawal requests are reviewed by YASJOY administration.</li>
+<li>Your points are deducted when the request is successfully submitted.</li>
+<li>Submitting a request does not mean payment has been sent. Payment is completed only after administration marks the request as paid.</li>
+<li>You must provide accurate payout details belonging to you.</li>
+<li>Accounts may be restricted for abuse or violation of these terms.</li>
+<li>These terms may be updated when necessary. You may be asked to review the updated version.</li>
+</ol><p class="small">By selecting “I Agree & Continue”, you confirm that you have read and accepted these terms.</p><div class="terms-actions"><button class="terms-decline" id="termsDecline">I Do Not Agree</button><button class="terms-accept" id="termsAccept">I Agree &amp; Continue</button></div></div></section>
+<section id="wallViewer" class="wall-viewer" hidden role="dialog" aria-modal="true" aria-label="Offer wall"><div class="wall-bar"><button type="button" id="wallBack" aria-label="Back to the app">← Back</button><strong id="wallTitle">Offer wall</strong><span id="wallExternal" aria-hidden="true" style="min-width:76px;display:inline-block"></span></div><div class="wall-stage"><iframe id="wallFrame" title="Offer wall" sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe><div id="wallSplash" class="wall-splash" hidden><span class="fc c1">🪙</span><span class="fc c2">⭐</span><span class="fc c3">💰</span><span class="fc c4">🪙</span><div class="splash-card" id="wallSplashLogo"></div><h2 id="wallSplashName">Offer wall</h2><p>Loading your offers… please wait a moment</p><div class="splash-bar"><i></i></div></div></div></section>
+<div id="methodImageView" class="method-image-view" hidden role="dialog" aria-modal="true"><img id="methodImageLarge" alt="Withdrawal method logo"></div>
+<section id="offerTermsGate" class="terms-overlay" hidden aria-modal="true" role="dialog" aria-labelledby="offerTermsTitle"><div class="terms-card"><h2 id="offerTermsTitle">Offer Wall Terms</h2><p>Before continuing, please read and accept these conditions:</p><ol><li>Offer availability depends on your country, device, and provider rules.</li><li>Complete each offer honestly on your own device.</li><li>Do not use VPNs, proxies, multiple accounts, or misleading information to bypass provider restrictions.</li><li>Rewards are credited only after the offer provider verifies completion.</li><li>YASJOY cannot guarantee approval or reward tracking by an external provider.</li></ol><label style="display:flex;gap:9px;align-items:flex-start;margin-top:14px;font-size:14px"><input id="offerTermsCheck" type="checkbox" style="width:auto;margin-top:3px"> I have read and agree to these terms.</label><div class="terms-actions"><button class="terms-accept" id="offerTermsContinue" disabled>Agree &amp; Continue</button></div></div></section>
+<section id="bannedScreen" class="banned-screen" hidden role="alert"><div class="banned-card"><div style="font-size:55px">🚫</div><h2>Your account is banned</h2><p>Access to YASJOY has been suspended for this account. Please contact the app administration.</p></div></section>
+<header><div class="brand"><span class="star">⭐</span><span>YASJOY👑</span></div><div class="balance"><span class="coin">🪙</span><span id="balance">0</span><button onclick="refreshBalance()" style="border:0;background:none;color:#078af5;font-size:24px" aria-label="Refresh">⟳</button></div></header>
+<main>
+<section id="home" class="page active"><div class="banner"><div class="wallet">💰</div><div style="flex:1"><div class="banner-text">Withdraw your points</div><button class="go" onclick="showPage('withdraw')" aria-label="Withdraw">➜</button></div></div><div class="section-title">🔥 Offer Walls</div><p class="subtitle">Complete offers · Earn coins</p><div class="offers" id="offersList"><div class="empty-offers">Loading offer walls…</div></div><div class="offer-dots" id="offerDots"></div></section>
+<section id="withdraw" class="page"><div class="panel"><h2>Withdraw your points</h2><p class="small">Available Balance</p><div id="coinsCard" class="coins-card"><strong id="withdrawBalance">0</strong><div class="cc-label">Coins</div></div><div id="coinsAnchor"></div><h3>Choose withdrawal method</h3><div class="withdraw-methods" id="withdrawMethodsList"><div class="empty-offers withdraw-status">Loading withdrawal methods…</div></div><button type="button" id="showMethodsBtn" class="primary" style="background:linear-gradient(110deg,#16bdf2,#dc143c)" onclick="showWithdrawalMethods()">← Show Methods</button><div id="withdrawFlow" hidden><h3 id="amountHeading">Select a points package</h3><div class="amounts" id="withdrawalTiers"></div><label class="field-label" for="account" id="accountLabel">Payout account details</label><input id="account" autocomplete="off" placeholder="Enter your payout account details"><button class="primary" id="submitWithdrawal" onclick="submitRequest()">Submit withdrawal request</button></div><button class="primary" style="background:#d9efff;color:#0758a8" onclick="showPage('home')">Back to Home</button><button type="button" id="acctBtn" class="primary" hidden style="background:linear-gradient(110deg,#5b6cff,#9b4dff);color:#fff" onclick="showPage('acctwd')">🆔 Enter Account ID</button></div></section>
+<section id="acctwd" class="page"><div class="panel"><h2>Enter Account ID</h2><p class="small">Enter your Account ID. Coins you earned from the offer walls are added to that account.</p><div class="coins-card"><strong id="acctCoins">0</strong><div class="cc-label">Coins · <span id="acctUsd">$0.00</span></div></div><p class="small" style="margin-top:14px">1 USD = 1,000 coins</p><label class="field-label" for="acctId">Account ID</label><input id="acctId" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="Enter your Account ID"><button class="primary" id="acctSend" onclick="submitAcct()">OK</button><p id="acctMsg" class="small" style="min-height:22px"></p><button class="primary" style="background:#d9efff;color:#0758a8" onclick="showPage('withdraw')">Back</button></div></section>
+<section id="profile" class="page"><div class="panel"><h2>Profile</h2><p>Your YASJOY demo profile</p><label class="field-label">Your User ID</label><div class="id-box"><strong id="userId">Connecting...</strong><button onclick="copyId()" style="border:0;background:none;color:#078af5;font-size:20px" aria-label="Copy User ID">📋</button></div><p class="small" id="userIdNote">Your User ID will be linked to your Firebase account.</p><hr style="border:0;border-top:1px solid #d9efff;margin:24px 0"><h2 style="font-size:24px">🔗 My Social Links</h2><p class="small">Official YASJOY social links</p><a class="social" id="telegramLink" href="#" target="_blank" rel="noopener noreferrer"><span class="social-icon">✈️</span>Telegram</a><a class="social" id="youtubeLink" href="#" target="_blank" rel="noopener noreferrer"><span class="social-icon">▶️</span>YouTube</a><a class="social" id="tiktokLink" href="#" target="_blank" rel="noopener noreferrer"><span class="social-icon">🎵</span>TikTok</a><a class="social" id="instagramLink" href="#" target="_blank" rel="noopener noreferrer"><span class="social-icon">📸</span>Instagram</a><p id="socialStatus" class="small">Loading social links from Firebase…</p><button class="primary" onclick="showPage('home')">Back to Home</button></div></section>
+</main>
+<nav class="bottom"><button class="nav active" id="navHome" onclick="showPage('home')"><span class="ico">⌂</span>Home</button><button class="nav" id="navProfile" onclick="showPage('profile')"><span class="ico">👤</span>Profile</button></nav>
+<script>
+let selectedCoins=0,balance=0,userId="",selectedMethod=null,withdrawalMethods=[];
+const TERMS_VERSION='yasjoy-terms-2026-11-v2';
+function checkTerms(){const gate=document.getElementById('termsGate');if(localStorage.getItem('yasjoy_terms_accepted')===TERMS_VERSION){gate.hidden=true;return}gate.hidden=false;document.body.style.overflow='hidden'}
+document.getElementById('termsAccept').addEventListener('click',async()=>{
+ localStorage.setItem('yasjoy_terms_accepted',TERMS_VERSION);
+ // The permission prompt is requested from this explicit acceptance click.
+ if('Notification' in window && window.isSecureContext && Notification.permission==='default'){
+  try{await Notification.requestPermission()}catch(error){console.warn('Notification permission request:',error)}
+ }
+ document.getElementById('termsGate').hidden=true;document.body.style.overflow='';
+});
+document.getElementById('termsDecline').addEventListener('click',()=>{alert('You cannot use YASJOY without accepting the terms.');});
+checkTerms();
+function showPage(id){if(document.getElementById("termsGate")?.hidden===false)return;if(document.getElementById("bannedScreen")?.hidden===false)return;document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));const page=document.getElementById(id);if(page)page.classList.add('active');document.getElementById('navHome').classList.toggle('active',id==='home');document.getElementById('navProfile').classList.toggle('active',id==='profile');document.body.classList.toggle('no-nav',id==='withdraw'||id==='acctwd');if(id==='acctwd'&&window.acctRefresh)window.acctRefresh();window.scrollTo(0,0);refreshBalance()}
+function refreshBalance(){const t=balance.toLocaleString('en-US');document.getElementById('balance').textContent=t;document.getElementById('withdrawBalance').textContent=t;document.querySelectorAll('.amount[data-coins]').forEach(b=>b.classList.toggle('low',Number(b.dataset.coins)>balance))}
+function yjToast(msg,kind){let t=document.getElementById('yjToast');if(!t){t=document.createElement('div');t.id='yjToast';t.setAttribute('role','status');document.body.append(t)}t.textContent=msg;t.className='show '+(kind||'');clearTimeout(t._h);t._h=setTimeout(()=>{t.className=''},4200)}
+function selectAmount(button,coins){document.querySelectorAll('.amount').forEach(b=>b.classList.remove('selected'));button.classList.add('selected');selectedCoins=coins}
+let pendingOffer=null,wallTimer=null;
+const OFFER_TERMS_KEY='yasjoy_offer_terms_accepted';
+function offerTermsAccepted(){try{return localStorage.getItem(OFFER_TERMS_KEY)==='v1'}catch(e){return false}}
+function buildWallUrl(url){const uid=window.getYasjoyUid?window.getYasjoyUid():'';return String(url).replace(/\{uid\}|\{user_id\}|\{userid\}|\[uid\]|\[user_id\]|\[userid\]/gi,encodeURIComponent(uid))}
+function openOffer(url,name,enabled,wallId,logo){
+ if(document.getElementById("bannedScreen")?.hidden===false)return;
+ if(!enabled){alert(name+' is currently disabled by YASJOY administration.');return}
+ if(!url||!/^https:\/\/\S+$/i.test(url)){alert('This offer wall has no valid HTTPS link.');return}
+ if(!window.getYasjoyUid||!window.getYasjoyUid()){alert('Your account is still connecting. Please try again in a moment.');return}
+ pendingOffer={url,name,wallId,logo:logo||''};
+ if(offerTermsAccepted()){startOffer(pendingOffer);return}
+ document.getElementById('offerTermsCheck').checked=false;document.getElementById('offerTermsContinue').disabled=true;document.getElementById('offerTermsGate').hidden=false;document.body.style.overflow='hidden';
+}
+function startOffer(t){pendingOffer=null;if(window.recordOfferEntry)window.recordOfferEntry(t);openWallViewer(t)}
+document.getElementById('offerTermsCheck').addEventListener('change',e=>document.getElementById('offerTermsContinue').disabled=!e.target.checked);
+document.getElementById('offerTermsGate').addEventListener('click',e=>{if(e.target.id==='offerTermsGate'){pendingOffer=null;document.getElementById('offerTermsGate').hidden=true;document.body.style.overflow=''}});
+document.getElementById('offerTermsContinue').addEventListener('click',()=>{if(!pendingOffer||!document.getElementById('offerTermsCheck').checked)return;const target=pendingOffer;try{localStorage.setItem(OFFER_TERMS_KEY,'v1')}catch(e){}document.getElementById('offerTermsGate').hidden=true;document.body.style.overflow='';startOffer(target)});
+function openWallViewer(t){
+ const viewer=document.getElementById('wallViewer'),frame=document.getElementById('wallFrame'),splash=document.getElementById('wallSplash'),finalUrl=buildWallUrl(t.url);
+ document.getElementById('wallTitle').textContent=t.name;document.getElementById('wallExternal').href=finalUrl;document.getElementById('wallSplashName').textContent=t.name;
+ const logoBox=document.getElementById('wallSplashLogo');logoBox.replaceChildren();
+ const letter=()=>{const f=document.createElement('span');f.className='hero-fallback';f.textContent=String(t.name||'?').charAt(0).toUpperCase();logoBox.replaceChildren(f)};
+ if(t.logo){const img=document.createElement('img');img.alt=t.name+' logo';img.onerror=letter;img.src=t.logo;logoBox.appendChild(img)}else letter();
+ splash.classList.remove('done');splash.hidden=false;viewer.hidden=false;document.body.style.overflow='hidden';
+ let finished=false;const finish=()=>{if(finished)return;finished=true;clearTimeout(wallTimer);splash.classList.add('done');setTimeout(()=>{splash.hidden=true},600)};
+ frame.dataset.active='1';frame.onload=()=>{if(frame.dataset.active==='1')finish()};
+ clearTimeout(wallTimer);wallTimer=setTimeout(finish,20000);
+ frame.src=finalUrl;
+}
+function closeWallViewer(){const frame=document.getElementById('wallFrame');frame.dataset.active='0';frame.onload=null;clearTimeout(wallTimer);frame.src='about:blank';document.getElementById('wallViewer').hidden=true;document.getElementById('wallSplash').hidden=true;document.body.style.overflow=''}
+document.getElementById('wallBack').addEventListener('click',closeWallViewer);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&document.getElementById('wallViewer').hidden===false)closeWallViewer()});
+let withdrawalSubmitting=false;
+async function submitRequest(){
+ if(document.getElementById("bannedScreen")?.hidden===false)return;
+ if(withdrawalSubmitting)return;
+ if(!selectedMethod){yjToast('Please choose a withdrawal method.','bad');return}
+ if(!selectedCoins){yjToast('Please choose a withdrawal amount.','bad');return}
+ if(!Number.isSafeInteger(selectedCoins)||selectedCoins<=0){yjToast('Invalid withdrawal amount.','bad');return}
+ if(balance<selectedCoins){yjToast('You need '+(selectedCoins-balance).toLocaleString('en-US')+' more coins for this amount.','bad');return}
+ const walletAddress=document.getElementById('account').value.trim(),what=(selectedMethod.accountLabel||'payout account details').toString().toLowerCase();
+ if(!walletAddress){yjToast('Please enter your '+what+'.','bad');return}
+ if(walletAddress.length<6||walletAddress.length>180){yjToast('Please check your '+what+' (6 to 180 characters).','bad');return}
+ const button=document.getElementById('submitWithdrawal');
+ withdrawalSubmitting=true;if(button){button.disabled=true;button.textContent='Submitting…'}
+ try{
+  const result=await window.createYasjoyWithdrawal({coins:selectedCoins,walletAddress,method:selectedMethod.name,methodId:selectedMethod.id,displayLabel:document.querySelector('.amount.selected strong')?.textContent||''});
+  yjToast('✓ Request sent for review. '+Number(result.deductedCoins).toLocaleString('en-US')+' coins deducted · balance '+Number(result.remainingBalance).toLocaleString('en-US'),'ok');
+  showWithdrawalMethods();
+ }catch(error){console.error('Withdrawal request error:',error);yjToast(error?.message||'Could not submit your request. Please try again.','bad')}
+ finally{withdrawalSubmitting=false;if(button){button.disabled=false;button.textContent='Submit withdrawal request'}}
+}
+function copyId(){if(!userId){alert('Your User ID is still loading.');return}if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(userId).then(()=>alert('User ID copied.')).catch(()=>alert('Your User ID is: '+userId))}else{alert('Your User ID is: '+userId)}}
+function dockCoins(down){
+ const card=document.getElementById('coinsCard'),list=document.getElementById('withdrawMethodsList'),anchor=document.getElementById('coinsAnchor');
+ if(!card||!list||!anchor)return;
+ if(down){const btn=document.getElementById('showMethodsBtn');(btn||list).insertAdjacentElement('afterend',card);card.classList.add('docked')}
+ else{anchor.insertAdjacentElement('beforebegin',card);card.classList.remove('docked')}
+}
+function showWithdrawalMethods(){
+ dockCoins(false);
+ selectedMethod=null;selectedCoins=0;
+ document.querySelectorAll('.withdraw-method').forEach(x=>{x.classList.remove('selected');x.hidden=false});
+ document.getElementById('withdrawFlow').hidden=true;
+ document.getElementById('showMethodsBtn').style.display='none';
+ document.getElementById('withdrawalTiers').replaceChildren();
+ document.getElementById('account').value='';
+ document.getElementById('withdrawMethodsList').scrollTo({left:0,behavior:'smooth'});
+}
+refreshBalance();
+</script>
+<script type="module">
+import {initializeApp,getApps,getApp} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import {getFirestore,doc,getDoc,setDoc,updateDoc,onSnapshot,serverTimestamp,collection,runTransaction,increment} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import {getAuth,signInAnonymously,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+const firebaseConfig={apiKey:"AIzaSyB45rvl6iTjsdiW3-Ka6jyqiFaJmrsUUwI",authDomain:"yasjoy.firebaseapp.com",projectId:"yasjoy",storageBucket:"yasjoy.firebasestorage.app",messagingSenderId:"967065409063",appId:"1:967065409063:web:4f7b882cc38f17ec8a2002"};
+const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getFirestore(app),auth=getAuth(app);
+try{onSnapshot(doc(db,"settings","appTheme"),snap=>{let t=snap.exists()&&typeof snap.data().theme==="string"?snap.data().theme:"classic";t=t;if(!/^[a-z]{3,12}$/.test(t))return;document.documentElement.setAttribute("data-theme",t);try{localStorage.setItem("yj_theme",t)}catch(e){}},()=>{})}catch(e){}
+let currentYasjoyUser=null;
+const IMG_OK=/^(?:https:\/\/\S+|data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+\/=]+)$/i;
+const isImg=v=>typeof v==='string'&&IMG_OK.test(v);
+
+window.__acct={allowed:false,on:true};
+window.updateAcctBtn=()=>{const b=document.getElementById('acctBtn');if(b)b.hidden=!window.__acct.on};
+try{onSnapshot(doc(db,"settings","acct"),snap=>{window.__acct.on=!snap.exists()||snap.data().enabled!==false;window.updateAcctBtn()},()=>{})}catch(e){}
+const usdText=n=>'$'+(Math.floor(Math.max(0,Number(n)||0))/1000).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+window.acctRefresh=()=>{const n=Number(document.getElementById('withdrawBalance')?.textContent.replace(/,/g,''))||0;document.getElementById('acctCoins').textContent=n.toLocaleString('en-US');document.getElementById('acctUsd').textContent=usdText(n);document.getElementById('acctMsg').textContent='';try{const v=localStorage.getItem('yj_acct_id');const i=document.getElementById('acctId');if(v&&!i.value)i.value=v}catch(e){}};
+window.submitAcct=async function(){
+ const msg=document.getElementById('acctMsg'),btn=document.getElementById('acctSend'),num=document.getElementById('acctId').value.trim();
+ const say=(t,ok)=>{msg.textContent=t;msg.style.color=ok?'#12935a':'#c01e3c'};
+ if(!currentYasjoyUser){say('Please wait, connecting…');return}
+ if(!/^\d{6,12}$/.test(num)){say('Enter a valid Account ID.');return}
+ btn.disabled=true;say('Transferring…',true);
+ try{const token=await currentYasjoyUser.getIdToken(),r=await fetch('/api/acct/transfer',{method:'POST',headers:{authorization:'Bearer '+token,'content-type':'application/json'},body:JSON.stringify({number:num})}),j=await r.json().catch(()=>({}));
+  if(!r.ok||!j.ok)throw new Error(j.error||('Error '+r.status));
+  say('✓ '+Number(j.transferred).toLocaleString('en-US')+' coins ('+j.usd+') added to your account.'+(j.held>0?' '+Number(j.held).toLocaleString('en-US')+' coins not earned from offers were kept.':''),true);try{localStorage.setItem('yj_acct_id',num)}catch(e){}}
+ catch(e){say(e.message||'Transfer failed')}
+ finally{btn.disabled=false}};
+window.getYasjoyUid=()=>currentYasjoyUser?currentYasjoyUser.uid:'';
+window.createYasjoyWithdrawal=async function(request){
+ const user=currentYasjoyUser;if(!user)throw new Error('Your account is still connecting. Please try again.');
+ const coins=Number(request.coins),walletAddress=String(request.walletAddress||'').trim(),methodId=String(request.methodId||'');
+ if(!Number.isSafeInteger(coins)||coins<=0)throw new Error('Invalid coin amount.');
+ if(walletAddress.length<6||walletAddress.length>180)throw new Error('Invalid payout account details.');
+ if(!methodId)throw new Error('Please choose a withdrawal method.');
+ const methodRef=doc(db,'withdrawMethods',methodId),userRef=doc(db,'users',user.uid),withdrawalId=doc(collection(db,'withdrawals')).id,withdrawalRef=doc(db,'withdrawals',withdrawalId),transactionRef=doc(db,'transactions',withdrawalId);
+ return await runTransaction(db,async transaction=>{
+  const methodSnap=await transaction.get(methodRef),userSnap=await transaction.get(userRef);
+  if(!methodSnap.exists())throw new Error('This withdrawal method is no longer available.');
+  if(!userSnap.exists())throw new Error('User account not found.');
+  const methodData=methodSnap.data(),userData=userSnap.data();
+  if(methodData.enabled!==true||methodData.name!==request.method)throw new Error('This withdrawal method is unavailable. Refresh and try again.');
+  const tier=(Array.isArray(methodData.tiers)?methodData.tiers:[]).find(t=>Number(t.coins)===coins);
+  if(!tier)throw new Error('This withdrawal amount is not available for the selected method.');
+  if(userData.banned===true)throw new Error('This account cannot submit withdrawal requests.');
+  if(typeof userData.balance!=='number'||!Number.isFinite(userData.balance))throw new Error('Your balance is not initialized. Please contact YASJOY administration.');
+  if(userData.balance<coins)throw new Error('Insufficient coins.');
+  const remainingBalance=userData.balance-coins;
+  transaction.update(userRef,{balance:remainingBalance,lastWithdrawalId:withdrawalId});
+  transaction.set(withdrawalRef,{uid:user.uid,publicId:'YJ-'+user.uid.slice(0,8).toUpperCase(),method:methodData.name,methodId:methodId,displayLabel:String(tier.displayLabel||''),coins:coins,walletAddress:walletAddress,status:'pending',createdAt:serverTimestamp()});
+  transaction.set(transactionRef,{uid:user.uid,type:'withdrawal',coins:-coins,withdrawalId:withdrawalId,createdAt:serverTimestamp()});
+  return {success:true,withdrawalId,deductedCoins:coins,remainingBalance,status:'pending'};
+ });
+};
+window.recordOfferEntry=async function(t){
+ try{
+  const user=currentYasjoyUser;if(!user||!t||!/^[A-Za-z0-9_-]{1,64}$/.test(String(t.wallId||'')))return;
+  const p='wallEntries.'+t.wallId;
+  await updateDoc(doc(db,'users',user.uid),{[p+'.name']:String(t.name||'').slice(0,60),[p+'.count']:increment(1),[p+'.lastAt']:serverTimestamp()});
+ }catch(e){console.warn('Could not record offer wall entry:',e)}
+};
+function setBannedView(banned){const screen=document.getElementById("bannedScreen");if(!screen)return;screen.hidden=!banned;const header=document.querySelector("header"),main=document.querySelector("main"),nav=document.querySelector("nav.bottom");if(header)header.style.display=banned?"none":"";if(main)main.style.display=banned?"none":"";if(nav)nav.style.display=banned?"none":""}
+function renderWithdrawalMethods(snapshot){
+ withdrawalMethods=snapshot.docs.map(d=>({id:d.id,...d.data()})).filter(m=>m.enabled===true);
+ const host=document.getElementById('withdrawMethodsList');host.replaceChildren();
+ const keepId=selectedMethod&&selectedMethod.id,keepCoins=selectedCoins,keepAcc=document.getElementById('account').value;
+ selectedMethod=null;selectedCoins=0;document.getElementById('withdrawFlow').hidden=true;document.getElementById('showMethodsBtn').style.display='none';document.getElementById('withdrawalTiers').replaceChildren();
+ document.getElementById('withdrawalTiers').append(Object.assign(document.createElement('div'),{className:'empty-offers withdraw-status',textContent:'Choose a withdrawal method first.'}));
+ if(!withdrawalMethods.length){host.append(Object.assign(document.createElement('div'),{className:'empty-offers withdraw-status',textContent:'No withdrawal methods are currently available.'}));return}
+ withdrawalMethods.sort((a,b)=>String(a.name||'').localeCompare(String(b.name||'')));
+ withdrawalMethods.forEach(method=>{
+  const b=document.createElement('button');b.type='button';b.className='withdraw-method';
+  const logo=isImg(method.logo);
+  if(logo){const img=document.createElement('img');img.src=method.logo;img.alt=(method.name||'')+' logo';img.onerror=()=>img.replaceWith(Object.assign(document.createElement('span'),{className:'method-fallback',textContent:'💳'}));b.append(img)}
+  else b.append(Object.assign(document.createElement('span'),{className:'method-fallback',textContent:'💳'}));
+  b.append(Object.assign(document.createElement('span'),{textContent:method.name||'Withdrawal'}));b.onclick=()=>chooseWithdrawalMethod(method,b);host.append(b);
+  if(keepId&&method.id===keepId){chooseWithdrawalMethod(method,b);document.getElementById('account').value=keepAcc;const t=[...document.querySelectorAll('.amount')].find(x=>Number(x.dataset.coins)===keepCoins);if(t)selectAmount(t,keepCoins)}
+ });
+}
+function hostScrollToSelected(button){button.scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest',inline:'center'});}
+function chooseWithdrawalMethod(method,button){
+ selectedMethod=method;selectedCoins=0;
+ document.querySelectorAll('.withdraw-method').forEach(x=>{x.classList.remove('selected');x.hidden=x!==button});
+ button.classList.add('selected');hostScrollToSelected(button);dockCoins(true);
+ document.getElementById('showMethodsBtn').style.display='block';
+ const flow=document.getElementById('withdrawFlow');flow.hidden=false;
+ document.getElementById('accountLabel').textContent=method.accountLabel||'Payout account details';
+ document.getElementById('account').placeholder=method.accountPlaceholder||'Enter your payout account details';
+ document.getElementById('account').value='';
+ const host=document.getElementById('withdrawalTiers');host.replaceChildren();
+ const tiers=Array.isArray(method.tiers)?method.tiers.filter(t=>Number.isSafeInteger(Number(t.coins))&&Number(t.coins)>0).sort((a,b)=>Number(a.coins)-Number(b.coins)):[];
+ if(!tiers.length){host.append(Object.assign(document.createElement('div'),{className:'empty-offers withdraw-status',textContent:'No withdrawal amounts have been configured for this method.'}));return}
+ tiers.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='amount'+(Number(t.coins)>balance?' low':'');b.dataset.coins=String(Number(t.coins));const amount=document.createElement('strong');amount.textContent=String(t.displayLabel||Number(t.coins).toLocaleString('en-US')+' coins');const points=document.createElement('small');points.textContent=Number(t.coins).toLocaleString('en-US')+' coins';b.append(amount,document.createElement('br'),points);b.onclick=()=>selectAmount(b,Number(t.coins));host.append(b)});
+}
+async function loadSocialLinks(){
+ const ids={telegram:"telegramLink",youtube:"youtubeLink",instagram:"instagramLink"},status=document.getElementById("socialStatus"),tik=document.getElementById("tiktokLink");
+ tik.href="https://www.tiktok.com/@yasjoy71";tik.hidden=false;
+ try{const snap=await getDoc(doc(db,"socialLinks","main"));if(!snap.exists()){status.textContent="Social links are not configured yet.";Object.values(ids).forEach(id=>document.getElementById(id).hidden=true);return}
+ const links=snap.data();let count=0;for(const [key,id] of Object.entries(ids)){const el=document.getElementById(id),url=links[key];if(typeof url==="string"&&/^https:\/\/\S+$/i.test(url)){el.href=url;el.hidden=false;count++}else el.hidden=true}
+ status.textContent=count?"Social links loaded from Firebase.":"No valid social links configured."
+ }catch(error){console.error("Social links error:",error);status.textContent="Could not load social links. Check Firebase rules and socialLinks/main."}
+}
+function renderOfferWalls(snapshot){
+ window.splashDone&&window.splashDone('walls');
+ const host=document.getElementById("offersList"),dots=document.getElementById("offerDots");host.replaceChildren();if(dots)dots.replaceChildren();
+ const walls=snapshot.docs.map(d=>({id:d.id,...d.data()})).filter(w=>w.visible!==false);
+ if(!walls.length){const empty=document.createElement("div");empty.className="empty-offers";empty.textContent="No offer walls are currently available.";host.appendChild(empty);return}
+ walls.sort((a,b)=>String(a.name||"").localeCompare(String(b.name||"")));
+ for(const wall of walls){
+  const name=typeof wall.name==="string"&&wall.name.trim()?wall.name.trim():"Offer wall",url=typeof wall.url==="string"&&/^https:\/\/\S+$/i.test(wall.url)?wall.url:"",enabled=wall.enabled===true&&!!url,logo=isImg(wall.logo)?wall.logo:"";
+  const card=document.createElement("article");card.className="offer";
+  const hero=document.createElement("div");hero.className="offer-hero";
+  const letter=()=>{const f=document.createElement("span");f.className="hero-fallback";f.textContent=name.charAt(0).toUpperCase();hero.replaceChildren(f)};
+  if(logo){const img=document.createElement("img");img.alt=name+" logo";img.loading="lazy";img.onerror=letter;img.src=logo;hero.appendChild(img)}else letter();
+  const body=document.createElement("div");body.className="offer-body";const title=document.createElement("h3"),description=document.createElement("p");title.textContent=name;description.textContent=typeof wall.description==="string"&&wall.description.trim()?wall.description.trim():"Complete offers and get rewards";
+  const button=document.createElement("button");button.className="earn";button.textContent=enabled?"Earn coins ➜":"Currently unavailable";button.disabled=!enabled;button.addEventListener("click",()=>openOffer(url,name,enabled,wall.id,logo));
+  body.append(title,description,button);card.append(hero,body);host.appendChild(card);
+  if(dots){const d=document.createElement("i"),idx=dots.children.length;d.onclick=()=>{const c=host.children[idx];c&&host.scrollTo({left:c.offsetLeft-host.offsetLeft-4,behavior:'smooth'})};dots.appendChild(d)}
+ }
+ const mark=()=>{if(!dots)return;const step=(host.children[1]?host.children[1].offsetLeft-host.children[0].offsetLeft:host.clientWidth)||1,i=Math.max(0,Math.min(walls.length-1,Math.round(host.scrollLeft/step)));[...dots.children].forEach((d,k)=>d.classList.toggle("on",k===i))};
+ host.onscroll=mark;mark();
+}
+let stopUserListener=null;
+/* Auto-detect country + IP. The first country is fixed; a different country later (confirmed by a 2nd source) bans the account automatically. */
+async function fetchGeo(skip){
+ const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,rej)=>setTimeout(()=>rej(new Error('timeout')),ms))]);
+ const sources=[
+  async()=>{const j=await (await fetch('https://ipwho.is/',{cache:'no-store'})).json();if(j.success===false)throw new Error('ipwho failed');return{ip:j.ip,countryCode:j.country_code,country:j.country}},
+  async()=>{const j=await (await fetch('https://get.geojs.io/v1/ip/geo.json',{cache:'no-store'})).json();return{ip:j.ip,countryCode:j.country_code,country:j.name||j.country}},
+  async()=>{const j=await (await fetch('https://api.country.is/',{cache:'no-store'})).json();return{ip:j.ip,countryCode:j.country,country:''}}
+ ];
+ for(let i=0;i<sources.length;i++){
+  if(i===skip)continue;
+  try{
+   const g=await withTimeout(sources[i](),6000),code=String(g.countryCode||'').trim().toUpperCase(),ip=String(g.ip||'').trim();
+   if(/^[A-Z]{2}$/.test(code)&&ip&&ip.length<=45)return{ip,countryCode:code,country:String(g.country||'').slice(0,60),src:i};
+  }catch(e){console.warn('Geo source failed:',e&&e.message)}
+ }
+ return null;
+}
+async function recordGeoClient(userRef,existing){
+ try{
+  const g=await fetchGeo(-1);if(!g)return;
+  const old=existing||{},payload={};
+  if(!old.countryCode){payload.countryCode=g.countryCode;payload.country=g.country;payload.countryAt=serverTimestamp();payload.lastCountryCode=g.countryCode}
+  else if(old.countryCode!==g.countryCode&&old.banned!==true){
+   const g2=await fetchGeo(g.src);
+   if(g2&&g2.countryCode===g.countryCode){
+    payload.banned=true;payload.banReason='country_change';payload.bannedBy='auto';payload.bannedAt=serverTimestamp();
+    payload.lastCountryCode=g.countryCode;payload.lastCountry=g.country;payload.previousCountryCode=old.countryCode;
+   }
+  }
+  if(old.ip!==g.ip){if(old.ip)payload.previousIp=old.ip;payload.ip=g.ip;payload.ipAt=serverTimestamp()}
+  if(!Object.keys(payload).length)return;
+  await updateDoc(userRef,payload);
+ }catch(e){console.warn('Could not save country/IP:',e)}
+}
+async function deviceFingerprint(d){
+ let gpu='';try{const c=document.createElement('canvas'),gl=c.getContext('webgl')||c.getContext('experimental-webgl');if(gl){const e=gl.getExtension('WEBGL_debug_renderer_info');gpu=e?String(gl.getParameter(e.UNMASKED_RENDERER_WEBGL)||''):String(gl.getParameter(gl.RENDERER)||'')}}catch(e){}
+ d.gpu=gpu;
+ const raw=[d.platform,d.screen,d.dpr,d.cores,d.mem,d.touch,gpu,d.tz,d.lang].join('|');
+ try{const h=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(raw));d.fp=[...new Uint8Array(h)].slice(0,12).map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){}
+ return d;
+}
+async function deviceInfo(){
+ const n=navigator,d={ua:n.userAgent,platform:n.platform||'',lang:n.language,langs:(n.languages||[]).join(','),tz:(Intl.DateTimeFormat().resolvedOptions()||{}).timeZone||'',screen:screen.width+'x'+screen.height,dpr:window.devicePixelRatio,cores:n.hardwareConcurrency,mem:n.deviceMemory,touch:n.maxTouchPoints,conn:(n.connection&&n.connection.effectiveType)||'',standalone:matchMedia('(display-mode: standalone)').matches,vendor:n.vendor||''};
+ try{if(n.userAgentData){d.brand=(n.userAgentData.brands||[]).map(b=>b.brand+' '+b.version).join(', ');const h=await n.userAgentData.getHighEntropyValues(['model','platformVersion','platform']);d.model=h.model||'';d.platformVersion=h.platformVersion||'';if(h.platform)d.platform=h.platform}}catch(e){}
+ d.webdriver=!!n.webdriver;
+ return deviceFingerprint(d);
+}
+async function recordGeoServer(user){
+ const token=await user.getIdToken(),bases=[''],body=JSON.stringify({device:await deviceInfo().catch(()=>({}))});
+ if(location.hostname!=='tapjoy-elp.pages.dev')bases.push('https://tapjoy-elp.pages.dev');
+ for(const base of bases){
+  try{const r=await fetch(base+'/api/geo',{method:'POST',headers:{authorization:'Bearer '+token,'content-type':'application/json'},body});if(r.ok){const j=await r.json();if(j&&j.ok)return j}}catch(e){console.warn('Geo server unavailable:',e&&e.message)}
+ }
+ return null;
+}
+async function recordGeo(user,userRef,existing){
+ try{const g=await recordGeoServer(user);if(g)return}catch(e){console.warn('Geo server error:',e)}
+ await recordGeoClient(userRef,existing);
+}
+async function setupUser(user){
+ const userRef=doc(db,"users",user.uid),snap=await getDoc(userRef),publicId="YJ-"+user.uid.slice(0,8).toUpperCase();
+ if(!snap.exists())await setDoc(userRef,{uid:user.uid,publicId,balance:0,createdAt:serverTimestamp(),lastActiveAt:serverTimestamp()});else await updateDoc(userRef,{lastActiveAt:serverTimestamp(),publicId});
+ recordGeo(user,userRef,snap.exists()?snap.data():null);
+ userId=publicId;document.getElementById("userId").textContent=publicId;document.getElementById("userIdNote").textContent="Your User ID is linked to your Firebase account.";
+ const profileText=document.querySelector("#profile .panel > p");if(profileText)profileText.textContent="Your YASJOY account";
+ if(stopUserListener)stopUserListener();
+ stopUserListener=onSnapshot(userRef,userSnap=>{const data=userSnap.data()||{};setBannedView(data.banned===true);balance=Number.isFinite(data.balance)?data.balance:0;window.updateAcctBtn();refreshBalance();window.splashDone&&window.splashDone('user')},error=>{console.error("User data error:",error);window.splashDone&&window.splashDone('user')});
+ clearInterval(window.__presence);const ping=()=>{if(document.visibilityState==='visible')updateDoc(userRef,{lastActiveAt:serverTimestamp()}).catch(()=>{})};window.__presence=setInterval(ping,120000);document.addEventListener('visibilitychange',ping);
+}
+loadSocialLinks();
+onSnapshot(collection(db,"withdrawMethods"),renderWithdrawalMethods,error=>{console.error("Withdrawal methods listener error:",error);const host=document.getElementById("withdrawMethodsList");host.replaceChildren();const msg=document.createElement("div");msg.className="empty-offers withdraw-status";msg.textContent="Could not load withdrawal methods. Check Firebase rules.";host.appendChild(msg)});
+onSnapshot(collection(db,"offerWalls"),renderOfferWalls,error=>{console.error("Offer walls listener error:",error);window.splashDone&&window.splashDone("walls");const host=document.getElementById("offersList");host.replaceChildren();const msg=document.createElement("div");msg.className="empty-offers";msg.textContent="Could not load offer walls. Please check your connection or Firebase rules.";host.appendChild(msg)});
+onAuthStateChanged(auth,async user=>{try{if(!user){currentYasjoyUser=null;await signInAnonymously(auth);return}currentYasjoyUser=user;await setupUser(user)}catch(error){console.error("Firebase account setup error:",error);document.getElementById("userId").textContent="Connection error — reload the page";document.getElementById("userIdNote").textContent="Could not connect. Check Anonymous Authentication and Firestore rules."}});
+</script>
+<script>try{if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}catch(e){}</script>
+</body>
+</html>
