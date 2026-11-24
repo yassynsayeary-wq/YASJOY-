@@ -1,20 +1,17 @@
-// POST /api/acct/me   (Authorization: Bearer <Google-signed-in Firebase ID token>)   body: {"number":"...","password":"..."} (both optional on the first call)
-// states: register (no account for this Google user) | recover (admin reset it) | login (number + password needed) | ready (full data)
-import { handler, json, HttpError, readJson, queryEq, verifyIdToken } from '../../_lib/fb.js';
-import { accountByUid, checkPin, cleanPin, suspension, suspendedError, usd, byNewest, listMethods } from '../../_lib/vip.js';
+// POST /api/acct/me   (Authorization: Bearer <Google-signed-in Firebase ID token>)
+// states: register (no account for this Google user yet) | ready (account found -> full data, no password needed)
+import { handler, json, HttpError, queryEq, verifyIdToken } from '../../_lib/fb.js';
+import { accountByUid, suspension, suspendedError, usd, byNewest, listMethods } from '../../_lib/vip.js';
 
 export const onRequest = handler(async ({ request, env }) => {
   if (request.method !== 'POST') throw new HttpError(405, 'Use POST');
   const { uid, email } = await verifyIdToken(env, request);
+  if (!email) throw new HttpError(401, 'Please sign in with Google');
   const found = await accountByUid(env, uid);
   if (!found) return json({ ok: true, state: 'register', email, methods: await listMethods(env) });
   const { number, acc } = found;
   const susp = suspension(acc);
   if (susp) throw suspendedError(susp);
-  if (acc.recovery) return json({ ok: true, state: 'recover', email });
-  const body = await readJson(request);
-  if (!body.password) return json({ ok: true, state: 'login', email, name: acc.name || '' });
-  await checkPin(env, number, acc, cleanPin(body.password), String(body.number || '').trim() === number);
   const [t, inv, methods] = await Promise.all([queryEq(env, 'vipTransfers', 'number', number), queryEq(env, 'vipInvoices', 'number', number), listMethods(env)]);
   const pts = Math.floor(Number(acc.points) || 0);
   return json({

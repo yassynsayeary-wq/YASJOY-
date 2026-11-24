@@ -84,6 +84,24 @@ section.fade{animation:fadein .25s ease both}@keyframes fadein{from{opacity:0;tr
 .center .logo{animation:float 3s ease-in-out infinite}@keyframes float{50%{transform:translateY(-6px)}}
 input::placeholder{color:#7f8ccc}
 @media(prefers-reduced-motion:reduce){.center .logo,.spin{animation:none}}
+
+/* ===== v20 polish: navy + gold ===== */
+:root{--bg:#0b1438;--card:#16235a;--card2:#1f3078;--line:#34468f}
+.steps2{display:flex;gap:8px;margin:2px 0 14px}.steps2 i{flex:1;height:6px;border-radius:9px;background:#ffffff1f}.steps2 i.on{background:linear-gradient(90deg,var(--gold),var(--gold2));box-shadow:0 0 12px #ffd24a66}
+.pinin{text-align:center;font-size:34px;letter-spacing:14px;font-weight:900;direction:ltr;padding:16px 8px 16px 22px;color:var(--gold);border-color:#ffd24a66}
+.card{position:relative;border-color:#4a5cab;background:linear-gradient(180deg,#1f3078,#16235a 70%);box-shadow:0 14px 34px #0007,inset 0 1px 0 #ffffff1c}
+.card::before{content:"";position:absolute;left:18px;right:18px;top:0;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#ffd24a99,transparent)}
+.hero{box-shadow:0 20px 44px #ff8a0040,inset 0 1px 0 #fff9}
+.top{padding:6px 2px}.brand{background:linear-gradient(110deg,#ffe58a,#ffb320);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none}
+.avatar{border:2px solid #fff3;box-shadow:0 8px 20px #ff9f1a66}
+.btn{letter-spacing:.3px;box-shadow:0 10px 22px #ff9f1a40,inset 0 1px 0 #fff7}
+.item{background:linear-gradient(180deg,#ffffff12,#ffffff06);border-color:#4a5cab}
+.kv b{color:#fff}
+.numbox b{text-shadow:0 0 18px #ffd24a55}
+.tabbar{background:linear-gradient(180deg,#101a4ef2,#0a1235f7);border-top:1px solid #4a5cab}
+.tabbar button.on{color:var(--gold);box-shadow:inset 0 -2px 0 var(--gold)}
+input,select{background:#0f1a4a}
+.gbtn{box-shadow:0 10px 24px #0006}
 </style>
 </head>
 <body>
@@ -95,60 +113,38 @@ input::placeholder{color:#7f8ccc}
 
 <!-- 1) Google sign-in only -->
 <section id="login" class="hidden center">
- <div class="logo">👑</div><h1>YASJOY Account</h1><p>Create your account or sign in</p>
+ <div class="logo">👑</div><h1>YASJOY Account</h1><p>Sign in with Google to continue</p>
  <div class="card">
   <button class="gbtn" id="gBtn"><svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.6-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.6-.4-3.9z"/></svg><span>Continue with Google</span></button>
   <p class="msg" id="loginMsg"></p><p class="note" id="wvNote" hidden style="color:var(--gold)">If Google does not open here, open this page in Chrome.</p>
-  <p class="note">Each account is linked to one Google account. If you delete the app, sign in again with the same Google account, your Account ID and your password — nothing is lost.</p>
+  <p class="note">Each account is linked to one Google account. Sign in once with Google. If a linked account exists you go straight in; otherwise you can create it. Nothing is lost if you reinstall.</p>
  </div>
 </section>
 
-<!-- 2) create account -->
+<!-- 2) create account: step 1 (details) -->
 <section id="setup" class="hidden"><div class="wrap">
  <div class="top"><div class="brand">👑 Account</div><div class="who" style="text-align:right"><span id="setupMail"></span></div><button class="icon" id="setupOut" aria-label="Sign out">⎋</button></div>
+ <div class="steps2"><i class="on"></i><i></i></div>
  <div class="card" id="newBox">
-  <h3>Create your account</h3>
-  <label for="fNum">Account ID (from the admin)</label><input id="fNum" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="9-digit Account ID">
+  <h3>Create your account</h3><p class="note" style="margin-top:0">Step 1 of 2 — your details</p>
+  <label for="fNum">Account ID (from the admin)</label><input id="fNum" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="Your private Account ID">
   <label for="fName">Name</label><input id="fName" maxlength="40" autocomplete="off" placeholder="Your name">
   <label for="fMethod">Category</label><select id="fMethod"></select>
   <div id="fIdBox"><label for="fWallet" id="fWalletLbl">ID number</label><input id="fWallet" maxlength="80" autocomplete="off" placeholder="ID number"></div>
-  <label for="fPass">Password</label><input id="fPass" type="password" maxlength="32" autocomplete="new-password" placeholder="At least 6 characters">
-  <label for="fPass2">Confirm password</label><input id="fPass2" type="password" maxlength="32" autocomplete="new-password" placeholder="Repeat the password">
-  <p class="note">You need an Account ID from the admin. Without it an account cannot be created. Keep your password safe.</p>
-  <button class="btn" id="regBtn">Create account</button><p class="msg" id="regMsg"></p>
- </div>
- <div class="card hidden" id="recBox">
-  <h3>Account reset by the admin</h3>
-  <p class="note">The admin reset your account. Enter your Account ID, the recovery code the admin gave you and a new password.</p>
-  <label for="rNum">Account ID</label><input id="rNum" inputmode="numeric" maxlength="12" autocomplete="off">
-  <label for="rCode">Recovery code</label><input id="rCode" inputmode="numeric" maxlength="12" autocomplete="off">
-  <label for="rPass">New password</label><input id="rPass" type="password" maxlength="32" autocomplete="new-password">
-  <button class="btn" id="recBtn">Continue</button><p class="msg" id="recMsg"></p>
+  <button class="btn" id="nextBtn">Next →</button><p class="msg" id="regMsg"></p>
  </div>
 </div></section>
 
-<!-- 3) Registered account: number + password -->
-<section id="pinScr" class="hidden center">
- <div class="logo">🔐</div><h1 id="pinHello">Welcome back</h1><p id="pinMail"></p>
- <div class="card">
-  <label for="lNum">Account ID</label><input id="lNum" inputmode="numeric" maxlength="12" autocomplete="off" placeholder="9-digit number from your account">
-  <label for="lPass">Password</label><input id="lPass" type="password" maxlength="64" autocomplete="current-password" placeholder="Password">
-  <button class="btn" id="pinBtn">Sign in</button><p class="msg" id="pinMsg"></p>
-  <button class="linkbtn" id="forgotBtn">Forgot password?</button>
-  <button class="linkbtn" id="pinOut" style="color:var(--mut)">Use another Google account</button>
- </div>
-</section>
-
-<!-- 4) Forgot password -->
-<section id="forgot" class="hidden"><div class="wrap">
- <div class="top"><button class="icon" id="fgBack" aria-label="Back">←</button><div class="brand">Forgot password</div></div>
- <div class="card">
-  <p class="note" style="margin-top:0">Choose the category you registered with and enter the ID number exactly as registered. The ID cannot be changed here — to change it, contact the admin.</p>
-  <label for="gMethod">Category</label><select id="gMethod"></select>
-  <div id="gIdBox"><label for="gWallet" id="gWalletLbl">ID number</label><input id="gWallet" maxlength="80" autocomplete="off"></div>
-  <label for="gPass">New password</label><input id="gPass" type="password" maxlength="32" autocomplete="new-password" placeholder="At least 6 characters">
-  <label for="gPass2">Confirm new password</label><input id="gPass2" type="password" maxlength="32" autocomplete="new-password">
-  <button class="btn" id="fgBtn">Set new password</button><p class="msg" id="fgMsg"></p>
+<!-- 3) create account: step 2 (the fixed 6-digit PIN from the admin) -->
+<section id="pinScr" class="hidden"><div class="wrap">
+ <div class="top"><button class="icon" id="pinBack" aria-label="Back">←</button><div class="brand">Enter your PIN</div></div>
+ <div class="steps2"><i class="on"></i><i class="on"></i></div>
+ <div class="card" style="text-align:center">
+  <div style="font-size:54px">🔐</div>
+  <h3 style="justify-content:center">6-digit PIN</h3>
+  <p class="note" style="margin-top:0">Enter the 6-digit PIN the admin gave you with your Account ID. It is fixed and never changes.</p>
+  <input id="pinIn" class="pinin" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="••••••">
+  <button class="btn" id="pinBtn">Create account</button><p class="msg" id="pinMsg"></p>
  </div>
 </div></section>
 
@@ -178,13 +174,7 @@ input::placeholder{color:#7f8ccc}
     <label for="sName">Name</label><input id="sName" maxlength="40" autocomplete="off">
     <label for="sMethod">Category</label><select id="sMethod"></select>
     <div id="sIdBox"><label for="sWallet" id="sWalletLbl">ID number</label><input id="sWallet" maxlength="80" autocomplete="off"></div>
-    <label for="sPassA">Your password</label><input id="sPassA" type="password" maxlength="64" autocomplete="current-password" placeholder="Required to save">
     <button class="btn" id="sSave">Save</button><p class="msg" id="sMsg"></p></div>
-   <div class="card"><h3>Change password</h3>
-    <label for="cOld">Current password</label><input id="cOld" type="password" maxlength="64" autocomplete="current-password">
-    <label for="cNew">New password</label><input id="cNew" type="password" maxlength="32" autocomplete="new-password" placeholder="At least 6 characters">
-    <label for="cNew2">Confirm new password</label><input id="cNew2" type="password" maxlength="32" autocomplete="new-password">
-    <button class="btn" id="cSave">Change password</button><p class="msg" id="cMsg"></p></div>
    <button class="btn danger" id="bOut2">Sign out</button>
   </section>
  </div>
@@ -195,17 +185,19 @@ input::placeholder{color:#7f8ccc}
 
 <script type="module">
 import {initializeApp,getApps,getApp} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult,setPersistence,browserLocalPersistence,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 const firebaseConfig={apiKey:"AIzaSyB45rvl6iTjsdiW3-Ka6jyqiFaJmrsUUwI",authDomain:"yasjoy.firebaseapp.com",projectId:"yasjoy",storageBucket:"yasjoy.firebasestorage.app",messagingSenderId:"967065409063",appId:"1:967065409063:web:4f7b882cc38f17ec8a2002"};
-const app=getApps().length?getApp():initializeApp(firebaseConfig),auth=getAuth(app);
+// A separate Firebase app instance (own session storage) so this app never shares or replaces the anonymous session of the user app.
+const app=(getApps().find(a=>a.name==='acct'))||initializeApp(firebaseConfig,'acct'),auth=getAuth(app);
+try{setPersistence(auth,browserLocalPersistence).catch(()=>{})}catch(e){}
 const $=id=>document.getElementById(id),SS={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}},del(k){try{sessionStorage.removeItem(k)}catch(e){}}};
 const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
-let user=null,num=SS.get('acct_num')||'',pw=SS.get('acct_pw')||'',data=null,timer=null,busy=false,methods=[];
+let user=null,draft=null,data=null,timer=null,busy=false,methods=[];
 const fmt=n=>(Math.floor(Number(n)||0)).toLocaleString('en-US');
 const usd=p=>'$'+(Math.floor(Math.max(0,Math.floor(Number(p)||0))/10)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const when=v=>{if(!v)return '';const d=new Date(v);return isNaN(d)?'':d.toLocaleString('en-US',{dateStyle:'medium',timeStyle:'short'})};
 function el(t,txt,c){const n=document.createElement(t);if(txt!==undefined)n.textContent=txt;if(c)n.className=c;return n}
-const SCREENS=['splash','login','setup','pinScr','forgot','susp','app'];
+const SCREENS=['splash','login','setup','pinScr','susp','app'];
 function screen(id){SCREENS.forEach(s=>$(s).classList.toggle('hidden',s!==id));window.scrollTo(0,0)}
 const say=(id,t,cls)=>{const m=$(id);m.textContent=t||'';m.className='msg'+(cls?' '+cls:'')};
 async function api(path,body){
@@ -218,7 +210,7 @@ async function api(path,body){
 async function loadMethods(){try{const r=await fetch('/api/acct/methods');const j=await r.json();if(j&&j.ok&&Array.isArray(j.methods))methods=j.methods}catch(e){}if(!methods.length)methods=[{id:'personal',name:'Personal',requiresId:false,idLabel:''}]}
 function fillSelect(sel,selected){sel.replaceChildren();methods.forEach(m=>{const o=el('option',m.name);o.value=m.id;sel.append(o)});if(selected&&methods.some(m=>m.id===selected))sel.value=selected}
 function bindIdField(sel,box,lbl,input){const f=()=>{const m=methods.find(x=>x.id===sel.value)||{};box.classList.toggle('hidden',!m.requiresId);lbl.textContent=(m.idLabel||'ID number')+' (required)';input.placeholder=m.idLabel||'ID number'};sel.addEventListener('change',f);f();return f}
-let fReg,fForgot,fSet;
+let fReg,fSet;
 function seal(){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('class','seal');const u=document.createElementNS('http://www.w3.org/2000/svg','use');u.setAttribute('href','#sealSvg');s.append(u);return s}
 function rain(){const box=$('paid');for(let i=0;i<22;i++){const c=el('span',['🪙','💰','💵','✨'][i%4],'coin');c.style.left=(Math.random()*100)+'%';c.style.animationDuration=(2.4+Math.random()*2.6)+'s';c.style.animationDelay=(Math.random()*1.2)+'s';box.append(c);setTimeout(()=>c.remove(),7000)}}
 function showPaid(v){$('paidAmt').textContent=fmt(v.points)+' pts = '+usd(v.points);$('paidInv').textContent=v.invoiceNo?'Invoice '+v.invoiceNo:'';$('paid').classList.remove('hidden');rain()}
@@ -254,92 +246,68 @@ function suspended(j){
 async function load(silent){
  if(busy||!user)return;busy=true;
  try{
-  const j=await api('me',pw?{number:num,password:pw}:{});
-  if(j.state==='register'){$('setupMail').textContent=j.email||'';if(j.methods&&j.methods.length)methods=j.methods;fillSelect($('fMethod'));if(!fReg)fReg=bindIdField($('fMethod'),$('fIdBox'),$('fWalletLbl'),$('fWallet'));fReg();$('newBox').classList.remove('hidden');$('recBox').classList.add('hidden');screen('setup')}
-  else if(j.state==='recover'){$('setupMail').textContent=j.email||'';$('newBox').classList.add('hidden');$('recBox').classList.remove('hidden');screen('setup')}
-  else if(j.state==='login'){$('pinHello').textContent='Welcome back'+(j.name?', '+j.name:'');$('pinMail').textContent=j.email||'';screen('pinScr');setTimeout(()=>$('lNum').focus(),50)}
-  else if(j.state==='ready'){SS.set('acct_num',num);SS.set('acct_pw',pw);data=j;render();checkPaid();screen('app');startPoll()}
+  const j=await api('me',{});
+  if(j.state==='register'){$('setupMail').textContent=j.email||'';if(j.methods&&j.methods.length)methods=j.methods;fillSelect($('fMethod'));if(!fReg)fReg=bindIdField($('fMethod'),$('fIdBox'),$('fWalletLbl'),$('fWallet'));fReg();clearInterval(timer);if(!$('pinScr').classList.contains('hidden')&&draft)return;screen('setup')}
+  else if(j.state==='ready'){data=j;draft=null;render();checkPaid();screen('app');startPoll()}
  }catch(e){
   if(e.data&&e.data.suspended)suspended(e.data);
-  else if((e.status===401||e.status===429)&&pw){pw='';SS.del('acct_pw');screen('pinScr');say('pinMsg',e.message,'bad')}
+  else if(e.status===401){say('loginMsg',e.message||'Please sign in again','bad');try{await signOut(auth)}catch(x){}screen('login')}
   else if(!silent){screen('login');say('loginMsg',e.message,'bad')}
  }finally{busy=false}
 }
 function startPoll(){clearInterval(timer);timer=setInterval(()=>{if(!document.hidden)load(true)},15000)}
 
 try{if(/FBAN|FBAV|Instagram|WhatsApp|Line\/|; wv\)/i.test(navigator.userAgent))$('wvNote').hidden=false}catch(e){}
+const gErr=(e)=>{
+ const c=e&&e.code;
+ if(c==='auth/popup-closed-by-user'||c==='auth/cancelled-popup-request')return '';
+ if(c==='auth/operation-not-allowed')return 'Google sign-in is not enabled yet (Firebase → Authentication → Sign-in method → Google).';
+ if(c==='auth/unauthorized-domain')return 'This domain is not authorized in Firebase (Authentication → Settings → Authorized domains): '+location.hostname;
+ if(c==='auth/network-request-failed')return 'Check your internet connection and try again.';
+ return 'Sign-in failed ('+(c||'error')+'). Try again, or open this page in Chrome.';
+};
 $('gBtn').onclick=async()=>{
  const b=$('gBtn');b.disabled=true;say('loginMsg','Opening Google…');
  const p=new GoogleAuthProvider();p.setCustomParameters({prompt:'select_account'});
  try{await signInWithPopup(auth,p);say('loginMsg','')}
  catch(e){
-  if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){try{await signInWithRedirect(auth,p);return}catch(e2){e=e2}}
-  if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request')say('loginMsg','');
-  else if(e.code==='auth/operation-not-allowed')say('loginMsg','Google sign-in is not enabled yet (Firebase → Authentication → Sign-in method → Google).','bad');
-  else if(e.code==='auth/unauthorized-domain')say('loginMsg','This domain is not authorized in Firebase (Authentication → Settings → Authorized domains).','bad');
-  else say('loginMsg','Sign-in failed ('+(e.code||'error')+'). '+(e.code==='auth/network-request-failed'?'Check your internet connection.':'Try again, or open this page in Chrome.'),'bad');
+  if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'||e.code==='auth/web-storage-unsupported'){try{say('loginMsg','Redirecting to Google…');await signInWithRedirect(auth,p);return}catch(e2){e=e2}}
+  say('loginMsg',gErr(e),'bad');
  }finally{b.disabled=false}
 };
-$('regBtn').onclick=async()=>{
- const name=$('fName').value.trim(),m=methods.find(x=>x.id===$('fMethod').value)||{},wallet=$('fWallet').value.trim(),p1=$('fPass').value,p2=$('fPass2').value;
- const rnum=$('fNum').value.trim();if(!/^\d{6,12}$/.test(rnum))return say('regMsg','Enter the Account ID you received from the admin','bad');
+getRedirectResult(auth).catch(e=>{const m=gErr(e);if(m)say('loginMsg',m,'bad')});
+$('nextBtn').onclick=()=>{
+ const name=$('fName').value.trim(),m=methods.find(x=>x.id===$('fMethod').value)||{},wallet=$('fWallet').value.trim(),rnum=$('fNum').value.trim();
+ if(!/^\d{6,12}$/.test(rnum))return say('regMsg','Enter the Account ID you received from the admin','bad');
  if(name.length<2)return say('regMsg','Enter your name','bad');
  if(!m.id)return say('regMsg','Choose a category','bad');
  if(m.requiresId&&!wallet)return say('regMsg','Enter your '+(m.idLabel||'ID number'),'bad');
- if(p1.length<6)return say('regMsg','Password must be at least 6 characters','bad');
- if(p1!==p2)return say('regMsg','The two passwords do not match','bad');
- $('regBtn').disabled=true;say('regMsg','Creating…');
- try{const j=await api('register',{number:rnum,name,methodId:m.id,walletNumber:m.requiresId?wallet:'',password:p1});num=j.number;pw=p1;say('regMsg','');await load(false)}
- catch(e){say('regMsg',e.message,'bad')}finally{$('regBtn').disabled=false}
+ draft={number:rnum,name,methodId:m.id,walletNumber:m.requiresId?wallet:''};say('regMsg','');say('pinMsg','');$('pinIn').value='';screen('pinScr');setTimeout(()=>$('pinIn').focus(),60);
 };
-$('recBtn').onclick=async()=>{
- const number=$('rNum').value.trim(),code=$('rCode').value.trim(),p=$('rPass').value;
- if(!/^\d{6,12}$/.test(number)||!code)return say('recMsg','Enter your number and the recovery code','bad');
- if(p.length<6)return say('recMsg','Password must be at least 6 characters','bad');
- $('recBtn').disabled=true;say('recMsg','Checking…');
- try{await api('recover',{number,code,pin:p});num=number;pw=p;say('recMsg','');await load(false)}
- catch(e){say('recMsg',e.message,'bad')}finally{$('recBtn').disabled=false}
-};
-$('pinBtn').onclick=async()=>{const n=$('lNum').value.trim(),p=$('lPass').value;if(!/^\d{6,12}$/.test(n))return say('pinMsg','Enter your Account ID','bad');if(p.length<4)return say('pinMsg','Enter your password','bad');num=n;pw=p;say('pinMsg','Checking…');busy=false;await load(false);$('lPass').value=''};
-$('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')$('pinBtn').click()});
-$('forgotBtn').onclick=async()=>{await loadMethods();fillSelect($('gMethod'));if(!fForgot)fForgot=bindIdField($('gMethod'),$('gIdBox'),$('gWalletLbl'),$('gWallet'));fForgot();say('fgMsg','');screen('forgot')};
-$('fgBack').onclick=()=>screen('pinScr');
-$('fgBtn').onclick=async()=>{
- const m=methods.find(x=>x.id===$('gMethod').value)||{},wallet=$('gWallet').value.trim(),p1=$('gPass').value,p2=$('gPass2').value;
- if(!m.id)return say('fgMsg','Choose your category','bad');
- if(m.requiresId&&!wallet)return say('fgMsg','Enter the ID number you registered','bad');
- if(p1.length<6)return say('fgMsg','Password must be at least 6 characters','bad');
- if(p1!==p2)return say('fgMsg','The two passwords do not match','bad');
- $('fgBtn').disabled=true;say('fgMsg','Checking…');
- try{await api('forgot',{methodId:m.id,walletNumber:m.requiresId?wallet:'',password:p1});say('fgMsg','✓ Password changed. Now sign in with your Account ID and the new password.','ok');setTimeout(()=>{say('pinMsg','Password changed. Sign in with the new password.','ok');screen('pinScr')},1600)}
- catch(e){say('fgMsg',e.data&&e.data.contactAdmin?e.message:e.message,'bad')}finally{$('fgBtn').disabled=false}
+$('pinBack').onclick=()=>screen('setup');
+$('pinIn').addEventListener('input',()=>{$('pinIn').value=$('pinIn').value.replace(/\D/g,'').slice(0,6);if($('pinIn').value.length===6)$('pinBtn').click()});
+$('pinBtn').onclick=async()=>{
+ const pin=$('pinIn').value.trim();if(!draft)return screen('setup');if(!/^\d{6}$/.test(pin))return say('pinMsg','Enter the 6-digit PIN','bad');
+ $('pinBtn').disabled=true;say('pinMsg','Creating…');
+ try{await api('register',{...draft,pin});say('pinMsg','');draft=null;busy=false;await load(false)}
+ catch(e){say('pinMsg',e.message,'bad');if(e.status===400&&/ID/.test(e.message)){screen('setup');say('regMsg',e.message,'bad')}$('pinIn').value=''}finally{$('pinBtn').disabled=false}
 };
 $('sSave').onclick=async()=>{
- const m=methods.find(x=>x.id===$('sMethod').value)||{},wallet=$('sWallet').value.trim(),cur=$('sPassA').value;
+ const m=methods.find(x=>x.id===$('sMethod').value)||{},wallet=$('sWallet').value.trim();
  const sname=$('sName').value.trim();if(sname.length<2)return say('sMsg','Enter your name','bad');if(m.requiresId&&!wallet)return say('sMsg','Enter your '+(m.idLabel||'ID number'),'bad');
- if(!cur)return say('sMsg','Enter your password to save','bad');
  $('sSave').disabled=true;say('sMsg','Saving…');
- try{await api('update',{number:data.account.number,password:cur,name:sname,methodId:m.id,walletNumber:m.requiresId?wallet:''});pw=cur;say('sMsg','✓ Saved','ok');$('sPassA').value='';busy=false;await load(true)}
+ try{await api('update',{name:sname,methodId:m.id,walletNumber:m.requiresId?wallet:''});say('sMsg','✓ Saved','ok');busy=false;await load(true)}
  catch(e){say('sMsg',e.message,'bad')}finally{$('sSave').disabled=false}
 };
-$('cSave').onclick=async()=>{
- const o=$('cOld').value,n=$('cNew').value,n2=$('cNew2').value;
- if(!o)return say('cMsg','Enter your current password','bad');
- if(n.length<6)return say('cMsg','New password must be at least 6 characters','bad');
- if(n!==n2)return say('cMsg','The two passwords do not match','bad');
- $('cSave').disabled=true;say('cMsg','Saving…');
- try{await api('update',{number:data.account.number,password:o,newPassword:n});pw=n;SS.set('acct_pw',pw);say('cMsg','✓ Password changed','ok');$('cOld').value=$('cNew').value=$('cNew2').value=''}
- catch(e){say('cMsg',e.message,'bad')}finally{$('cSave').disabled=false}
-};
-const out=async()=>{num='';pw='';SS.del('acct_num');SS.del('acct_pw');data=null;clearInterval(timer);try{await signOut(auth)}catch(e){}};
-$('pinOut').onclick=out;$('setupOut').onclick=out;$('suspOut').onclick=out;$('bOut2').onclick=out;
+const out=async()=>{draft=null;data=null;clearInterval(timer);try{await signOut(auth)}catch(e){}};
+$('setupOut').onclick=out;$('suspOut').onclick=out;$('bOut2').onclick=out;
 $('refresh').onclick=()=>{busy=false;load(false)};
 $('copyNum').onclick=async()=>{try{await navigator.clipboard.writeText($('myNum').textContent);$('copyNum').textContent='Copied ✓'}catch(e){$('copyNum').textContent='Select & copy'}setTimeout(()=>$('copyNum').textContent='Copy',1600)};
 function tab(w){[['p','tabPoints','bPoints'],['y','tabPay','bPay'],['a','tabProfile','bProf']].forEach(([k,s,b])=>{$(s).classList.toggle('hidden',k!==w);$(s).classList.toggle('fade',k===w);$(b).classList.toggle('on',k===w)});window.scrollTo(0,0)}
 $('bPoints').onclick=()=>tab('p');$('bPay').onclick=()=>tab('y');$('bProf').onclick=()=>tab('a');
 $('paidOk').onclick=()=>{$('paid').classList.add('hidden');tab('y')};
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)load(true)});
-onAuthStateChanged(auth,u=>{user=u;if(!u){clearInterval(timer);screen('login');return}load(false)});
+onAuthStateChanged(auth,u=>{user=(u&&!u.isAnonymous)?u:null;if(!user){clearInterval(timer);screen('login');return}load(false)});
 </script>
 </body>
 </html>

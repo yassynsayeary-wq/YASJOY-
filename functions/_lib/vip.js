@@ -19,6 +19,13 @@ export const cleanPin = (v) => {
   if (p.length < 4 || p.length > 64) throw new HttpError(400, 'Enter your password');
   return p;
 };
+// The fixed 6-digit PIN issued by the admin together with the account number.
+export const PIN6_RE = /^\d{6}$/;
+export const cleanPin6 = (v) => {
+  const p = String(v == null ? '' : v).trim();
+  if (!PIN6_RE.test(p)) throw new HttpError(400, 'Enter the 6-digit PIN');
+  return p;
+};
 export const cleanNewPassword = (v) => {
   const p = String(v == null ? '' : v);
   if (p.length < 6 || p.length > 32) throw new HttpError(400, 'Password must be 6 to 32 characters');
@@ -73,12 +80,13 @@ export { getDocMeta };
 
 /* ---- categories (wallet types) managed by the admin in vipMethods; "Personal" is built in and needs no ID ---- */
 export const PERSONAL = { id: 'personal', name: 'Personal', requiresId: false, idLabel: '' };
+export const NONE = { id: 'none', name: 'None', requiresId: false, idLabel: '' };
 export async function listMethods(env) {
   const rows = await queryEq(env, 'vipMethods', 'kind', 'method', 200);
   const m = rows.filter((x) => x.data.enabled !== false && x.data.name)
     .map((x) => ({ id: x.id, name: String(x.data.name), requiresId: x.data.requiresId !== false, idLabel: String(x.data.idLabel || ''), order: Number(x.data.order) || 0 }))
     .sort((a, b) => a.order - b.order || a.name.localeCompare(b.name));
-  return [PERSONAL, ...m.map(({ order, ...r }) => r)];
+  return [PERSONAL, NONE, ...m.map(({ order, ...r }) => r)];
 }
 /** Resolves the chosen category and its ID (wallet number); throws friendly errors. */
 export async function pickMethod(env, methodId, walletNumber) {

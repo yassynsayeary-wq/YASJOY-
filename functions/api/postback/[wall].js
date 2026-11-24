@@ -14,6 +14,7 @@
 // Parameter names are flexible: uid|snuid|user_id..., amount|currency|reward|points..., txid|id|trans_id|transaction_id..., sig|verifier|hash|signature...
 import { handler, text, HttpError, getDoc, write, commit, isAlreadyExists, isMissing, mustCommit,
   md5Hex, sha256Hex, hmacSha256Hex, hmacSha1Hex, timingSafeEqual, isUid } from '../../_lib/fb.js';
+import { runGuard } from '../../_lib/guard.js';
 
 const clean = (s) => String(s || '').trim();
 const MAX_POINTS = 5_000_000;
@@ -40,7 +41,7 @@ async function log(env, wallId, result, p, request) {
   } catch (e) { console.error('postback log failed', e); }
 }
 
-export const onRequest = handler(async ({ request, env, params: routeParams }) => {
+export const onRequest = handler(async ({ request, env, params: routeParams, waitUntil }) => {
   if (request.method !== 'GET' && request.method !== 'POST') throw new HttpError(405, 'Use GET or POST');
   const wallId = clean(routeParams && routeParams.wall);
   if (!isUid(wallId)) return text('ERROR: bad wall', 400);
@@ -97,7 +98,12 @@ export const onRequest = handler(async ({ request, env, params: routeParams }) =
     }),
     write(env, `users/${uid}`, { inc: [[['balance'], coins], [['offerPoints'], coins], [['offerCount'], 1], [['wallPoints', wallId], coins]], ts: [['lastOfferAt']], exists: true }),
   ]);
-  if (r.ok) return text('OK');
+  if (r.ok) {
+    // فحص الحماية التلقائية بعد كل مكافأة (حتى لو المسؤول غير متصل)
+    const g = runGuard(env, uid).catch(() => null);
+    if (typeof waitUntil === 'function') waitUntil(g); else await g;
+    return text('OK');
+  }
   if (isAlreadyExists(r)) return text('OK duplicate');
   if (isMissing(r)) { await log(env, wallId, 'user_not_found', logP, request); return text('ERROR: user not found', 404); }
   mustCommit(r, 'Crediting points');
