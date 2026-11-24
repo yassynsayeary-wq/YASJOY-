@@ -35,3 +35,4 @@ export const onRequest = handler(async ({ request, env }) => {
   if (isConflict(r)) throw new HttpError(409, 'This account ID was just used. Please check it.');
   mustCommit(r, 'Register');
 });
+77
